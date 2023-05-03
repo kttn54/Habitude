@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "956443854631",
+    "project_id": "habitude-eea0c",
+    "storage_bucket": "habitude-eea0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956443854631:android:4e3044d87e4e7a5bb78b02",
+        "android_client_info": {
+          "package_name": "com.example.habitude"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956443854631-enhvkv4pn2omhq5vnmc6rutka1mmilvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0QvacSVq1VpeBLTpJ0NUvef9EUlfVtH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956443854631-enhvkv4pn2omhq5vnmc6rutka1mmilvi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
