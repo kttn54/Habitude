@@ -3,10 +3,12 @@ package com.example.habitude.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.GravityCompat
 import com.example.habitude.R
 import com.example.habitude.databinding.ActivityMainBinding
@@ -24,6 +26,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        bindingAppBar = AppBarMainBinding.inflate(layoutInflater)
+        //bindingAppBar = AppBarMainBinding.bind(binding.root)
+
         setupActionBar()
 
         binding.navView.setNavigationItemSelectedListener(this)
@@ -33,6 +38,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(bindingAppBar?.toolbarMainActivity)
 
         bindingAppBar?.toolbarMainActivity?.setNavigationIcon(R.drawable.ic_action_navigation_menu)
+
         bindingAppBar?.toolbarMainActivity?.setNavigationOnClickListener {
             toggleDrawer()
         }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
     <group android:checkableBehavior="single" >
         <item
             android:id="@+id/navMyProfile"
@@ -11,5 +13,22 @@
             android:icon="@drawable/ic_nav_sign_out"
             android:title="@string/nav_sign_out" />
     </group>
+
+    <item android:title="Example category" >
+        <menu>
+            <item
+                android:id="@+id/navExample1"
+                android:icon="@drawable/ic_vector_add_24dp"
+                android:title="Example1"/>
+            <item
+                android:id="@+id/navExample2"
+                android:icon="@drawable/ic_vector_add_24dp"
+                android:title="Example2"/>
+            <item
+                android:id="@+id/navExample3"
+                android:icon="@drawable/ic_vector_add_24dp"
+                android:title="Example3"/>
+        </menu>
+    </item>
 
 </menu>

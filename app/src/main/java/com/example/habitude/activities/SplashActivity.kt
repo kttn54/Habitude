@@ -34,7 +34,7 @@ class SplashActivity : BaseActivity() {
      * which is where UI related code should be executed
     **/
     private fun moveToNextActivity() {
-        val delayMillis = 2500L
+        val delayMillis = 1000L
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
 
