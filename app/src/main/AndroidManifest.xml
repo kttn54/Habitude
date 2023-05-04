@@ -30,6 +30,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.SplashActivity"
+            android:theme="@style/Theme.HabitudeSplash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -11,6 +11,7 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import com.example.habitude.databinding.ActivitySplashBinding
+import firebase.FirestoreClass
 
 class SplashActivity : BaseActivity() {
 
@@ -27,16 +28,23 @@ class SplashActivity : BaseActivity() {
     }
 
     /**
-     * This function shows the Splash activity for 1 second, then moves to the Intro activity
+     * This function shows the Splash activity for 2.5 second, then moves to the Main/Intro activity,
+     * depending if the user is already logged in or not.
      * Handler(Looper.getMainLooper()) ensures the postDelayed method will run on the main thread,
      * which is where UI related code should be executed
     **/
     private fun moveToNextActivity() {
         val delayMillis = 2500L
-        val intent = Intent(this@SplashActivity, IntroActivity::class.java)
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
-            startActivity(intent)
+
+            var currentUserID = FirestoreClass().getCurrentUserID()
+
+            if (currentUserID.isNotEmpty()) {
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                startActivity(Intent(this@SplashActivity, IntroActivity::class.java))
+            }
             finish()
         }, delayMillis)
     }
