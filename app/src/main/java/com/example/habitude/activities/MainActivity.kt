@@ -1,39 +1,51 @@
 package com.example.habitude.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.example.habitude.R
 import com.example.habitude.databinding.ActivityMainBinding
-import com.example.habitude.databinding.AppBarMainBinding
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding
-    private var bindingAppBar: AppBarMainBinding? = null
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupToggle()
         setupActionBar()
 
         binding.navView.setNavigationItemSelectedListener(this)
     }
 
-    private fun setupActionBar() {
-        setSupportActionBar(bindingAppBar?.toolbarMainActivity)
+    private fun setupToggle() {
+        toggle = ActionBarDrawerToggle(
+            this@MainActivity,
+            binding.drawerLayout,
+            binding.toolbarMainActivity,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close)
 
-        bindingAppBar?.toolbarMainActivity?.setNavigationIcon(R.drawable.ic_action_navigation_menu)
-        bindingAppBar?.toolbarMainActivity?.setNavigationOnClickListener {
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    private fun setupActionBar() {
+        setSupportActionBar(binding.toolbarMainActivity)
+
+        binding.toolbarMainActivity.setNavigationIcon(R.drawable.ic_action_navigation_menu)
+        binding.toolbarMainActivity.setNavigationOnClickListener {
             toggleDrawer()
         }
     }
@@ -42,7 +54,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            binding.drawerLayout.isDrawerOpen(GravityCompat.START)
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 
