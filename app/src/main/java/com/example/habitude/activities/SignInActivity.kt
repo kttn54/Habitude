@@ -27,6 +27,9 @@ class SignInActivity : BaseActivity() {
         }
     }
 
+    /**
+     * A function to authenticate user information and sign-in if validated.
+     */
     private fun signInRegisteredUser() {
         // Here we get the text from editText and trim the space
         val email: String = binding.etEmailSignIn.text.toString().trim { it <= ' ' }
@@ -91,6 +94,9 @@ class SignInActivity : BaseActivity() {
         binding.toolbarSignInActivity.setNavigationOnClickListener { onBackPressed() }
     }
 
+    /**
+     * A function for move to the Main Activity if sign-in is successful.
+     */
     fun signInSuccess(user: User) {
         hideProgressDialog()
         startActivity(Intent(this, MainActivity::class.java))

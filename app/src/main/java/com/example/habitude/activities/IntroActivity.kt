@@ -6,6 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.habitude.databinding.ActivityIntroBinding
 
+/**
+ * A class that shows the Introduction Activity, which is displayed after the Splash screen.
+ * It displays users with have the option of signing in or signing up.
+ */
+
 class IntroActivity : BaseActivity() {
 
     private lateinit var binding: ActivityIntroBinding

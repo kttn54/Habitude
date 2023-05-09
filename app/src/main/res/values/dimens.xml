@@ -61,4 +61,8 @@
     <dimen name="board_image_size">100dp</dimen>
     <dimen name="create_board_til_marginTop">25dp</dimen>
     <dimen name="create_board_btn_marginTop">30dp</dimen>
+
+    <dimen name="habit_day_circle_margin">5dp</dimen>
+    <dimen name="habit_day_circle_radius">35dp</dimen>
+    <dimen name="habit_day_circle_text_size">11sp</dimen>
 </resources>

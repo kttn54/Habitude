@@ -12,6 +12,10 @@ import com.example.habitude.databinding.ActivityBaseBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
+/**
+ * A class that contains base functions that are used by multiple activities.
+ */
+
 open class BaseActivity : AppCompatActivity() {
 
     private var doubleBackToExitPressedOnce = false
@@ -24,6 +28,9 @@ open class BaseActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    /**
+     * A function to show the progress dialog when data is being fetched.
+     */
     fun showProgressDialog(text: String) {
         mProgressDialog = Dialog(this)
         mProgressDialog.setContentView(R.layout.dialog_progress)
@@ -31,6 +38,9 @@ open class BaseActivity : AppCompatActivity() {
         mProgressDialog.show()
     }
 
+    /**
+     * A function to hide the progress dialog once data is fetched.
+     */
     fun hideProgressDialog() {
         mProgressDialog.dismiss()
     }
@@ -39,6 +49,9 @@ open class BaseActivity : AppCompatActivity() {
         return FirebaseAuth.getInstance().currentUser!!.uid
     }
 
+    /**
+     * A function that exits the app if the back button is pressed twice in a row.
+     */
     fun doubleBackToExit() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed()
@@ -55,6 +68,9 @@ open class BaseActivity : AppCompatActivity() {
         Handler().postDelayed({doubleBackToExitPressedOnce = false}, 2000)
     }
 
+    /**
+     * A function that displays a SnackBar if there is an error.
+     */
     fun showErrorSnackBar(message: String) {
         val snackBar = Snackbar.make(findViewById(android.R.id.content),
             message, Snackbar.LENGTH_LONG)

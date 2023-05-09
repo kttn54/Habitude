@@ -1,7 +1,9 @@
 package firebase
 
+import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.example.habitude.activities.MainActivity
 import com.example.habitude.activities.SignInActivity
 import com.example.habitude.activities.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +18,7 @@ class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
 
     /**
-     * A function to make an entry of the registered user in the firestore database.
+     * A function to make an entry of the registered user in the Firestore database.
      */
     fun registerUser(activity: SignUpActivity, userInfo: User) {
 
@@ -43,22 +45,36 @@ class FirestoreClass {
     /**
      * A function for signing in the user.
      */
-    fun signInUser(activity:SignInActivity) {
+    fun signInUser(activity: Activity) {
         mFireStore.collection(Constants.USERS)
             // Document ID for users fields. Here the document it is the User ID.
             .document(getCurrentUserID())
             // Here the userInfo are Field and the SetOption is set to merge. It is for if we wants to merge
             .get()
             .addOnSuccessListener { document ->
-                val loggedInUser = document.toObject(User::class.java)
-                if (loggedInUser != null) {
-                    activity.signInSuccess(loggedInUser)
-                } else {
-                    Toast.makeText(activity, "User doesn't exist!", Toast.LENGTH_SHORT).show()
+                val loggedInUser = document.toObject(User::class.java)!!
+
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.signInSuccess(loggedInUser)
+                    }
+                    is MainActivity -> {
+                        activity.displayNavigationUserDetails(loggedInUser)
+                    }
+
                 }
+
             }
             .addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+
+                }
                 Log.e(
                     "SignInUser",
                     "Error writing document",

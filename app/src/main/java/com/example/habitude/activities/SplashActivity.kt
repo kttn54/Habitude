@@ -30,11 +30,16 @@ class SplashActivity : BaseActivity() {
     /**
      * This function shows the Splash activity for 2.5 second, then moves to the Main/Intro activity,
      * depending if the user is already logged in or not.
-     * Handler(Looper.getMainLooper()) ensures the postDelayed method will run on the main thread,
-     * which is where UI related code should be executed
     **/
     private fun moveToNextActivity() {
-        val delayMillis = 1000L
+        val delayMillis = 500L
+
+
+         /*
+         Handler(Looper.getMainLooper()) ensures the postDelayed method will run on the main thread,
+         which is where UI related code should be executed
+         */
+
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
 
@@ -50,7 +55,7 @@ class SplashActivity : BaseActivity() {
     }
 
     /**
-     * The below is ensuring the app's content is properly displayed and system UI is hidden
+     * This function ensures the app's content is properly displayed and system UI is hidden
      * so that the app is full screen. It can be shown through swiping if needed.
     **/
     private fun makeSplashFullScreen() {
@@ -73,6 +78,9 @@ class SplashActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function sets the font for the Splash activity.
+     **/
     private fun setSplashTextFont() {
         val typeface: Typeface =
             Typeface.createFromAsset(assets, "carbon bl.ttf")

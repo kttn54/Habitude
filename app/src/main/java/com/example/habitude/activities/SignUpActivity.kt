@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.auth.User
 import firebase.FirestoreClass
+import kotlin.text.Typography.registered
 
 class SignUpActivity : BaseActivity() {
 
@@ -43,6 +44,9 @@ class SignUpActivity : BaseActivity() {
         binding.btnSignUp.setOnClickListener { registerUser() }
     }
 
+    /**
+     * A function to register the user into the Firestore database.
+     */
     private fun registerUser() {
         // Here we get the text from editText and trim the space
         val name: String = binding.etName.text.toString().trim { it <= ' ' }
@@ -72,6 +76,9 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
+    /**
+     * A function to check whether all Sign-up fields are valid.
+     */
     private fun validateForm(name: String, email: String, password: String): Boolean {
         return when {
             TextUtils.isEmpty(name) -> {
@@ -93,7 +100,8 @@ class SignUpActivity : BaseActivity() {
     }
 
     /**
-     * A function to be called the user is registered successfully and entry is made in the firestore database.
+     * A function to be called the user is registered successfully and
+     * an entry is made in the Firestore database.
      */
     fun userRegisteredSuccess() {
 
@@ -106,10 +114,10 @@ class SignUpActivity : BaseActivity() {
         // Hide the progress dialog
         hideProgressDialog()
 
-        /**
-         * Here the new user registered is automatically signed-in so we just sign-out the user from firebase
-         * and send him to Intro Screen for Sign-In
-         */
+        /*
+        Here the new user registered is automatically signed-in so we just sign-out the user from firebase
+        and send him to Intro Screen for Sign-In
+        */
         FirebaseAuth.getInstance().signOut()
         // Finish the Sign-Up Screen
         finish()
