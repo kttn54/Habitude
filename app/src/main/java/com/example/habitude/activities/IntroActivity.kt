@@ -2,7 +2,6 @@ package com.example.habitude.activities
 
 import android.content.Intent
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.habitude.databinding.ActivityIntroBinding
 

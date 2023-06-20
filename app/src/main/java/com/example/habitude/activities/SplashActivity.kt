@@ -3,7 +3,6 @@ package com.example.habitude.activities
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,7 +10,7 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import com.example.habitude.databinding.ActivitySplashBinding
-import firebase.FirestoreClass
+import com.example.habitude.firebase.FirestoreClass
 
 class SplashActivity : BaseActivity() {
 
@@ -33,7 +32,6 @@ class SplashActivity : BaseActivity() {
     **/
     private fun moveToNextActivity() {
         val delayMillis = 500L
-
 
          /*
          Handler(Looper.getMainLooper()) ensures the postDelayed method will run on the main thread,

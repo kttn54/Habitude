@@ -1,16 +1,15 @@
-package firebase
+package com.example.habitude.firebase
 
 import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 import com.example.habitude.activities.MainActivity
 import com.example.habitude.activities.SignInActivity
 import com.example.habitude.activities.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import model.User
-import utils.Constants
+import com.example.habitude.data.User
+import com.example.habitude.utils.Constants
 
 class FirestoreClass {
 
@@ -61,9 +60,7 @@ class FirestoreClass {
                     is MainActivity -> {
                         activity.displayNavigationUserDetails(loggedInUser)
                     }
-
                 }
-
             }
             .addOnFailureListener { e ->
                 when (activity) {

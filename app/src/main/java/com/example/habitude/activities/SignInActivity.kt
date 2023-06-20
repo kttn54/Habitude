@@ -1,7 +1,6 @@
 package com.example.habitude.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -9,7 +8,7 @@ import android.widget.Toast
 import com.example.habitude.R
 import com.example.habitude.databinding.ActivitySignInBinding
 import com.google.firebase.auth.FirebaseAuth
-import model.User
+import com.example.habitude.data.User
 
 class SignInActivity : BaseActivity() {
 

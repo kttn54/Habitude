@@ -1,4 +1,4 @@
-package model
+package com.example.habitude.data
 
 
 data class Habit (

@@ -3,7 +3,7 @@ package adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habitude.databinding.ItemHabitRowBinding
-import model.Habit
+import com.example.habitude.data.Habit
 
 class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<HabitAdapter.ViewHolder>() {
 

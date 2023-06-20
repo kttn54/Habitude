@@ -1,22 +1,23 @@
 package com.example.habitude.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.example.habitude.R
 import com.example.habitude.databinding.ActivitySignUpBinding
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.auth.User
-import firebase.FirestoreClass
-import kotlin.text.Typography.registered
+import com.example.habitude.firebase.FirestoreClass
+import com.example.habitude.data.User
+import com.example.habitude.viewmodel.RegisterViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignUpActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
+    private val viewModel by viewModels<RegisterViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +25,8 @@ class SignUpActivity : BaseActivity() {
         setContentView(binding.root)
 
         setupActionBar()
+
+        binding.btnSignUp.setOnClickListener { registerUser() }
     }
 
     /**
@@ -40,8 +43,6 @@ class SignUpActivity : BaseActivity() {
         }
 
         binding.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressed() }
-
-        binding.btnSignUp.setOnClickListener { registerUser() }
     }
 
     /**
@@ -51,28 +52,12 @@ class SignUpActivity : BaseActivity() {
         // Here we get the text from editText and trim the space
         val name: String = binding.etName.text.toString().trim { it <= ' ' }
         val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
-        val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
+        val password: String = binding.etPassword.text.toString()
 
-        if (validateForm(name, email, password)) {
+        if (validateForm (name, email, password)) {
             showProgressDialog(resources.getString(R.string.please_wait))
 
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val firebaseUser: FirebaseUser = task.result!!.user!!
-                        val registeredEmail = firebaseUser.email!!
-
-                        val user = model.User(firebaseUser.uid, name, registeredEmail)
-
-                        FirestoreClass().registerUser(this@SignUpActivity, user)
-                    } else {
-                        Toast.makeText(
-                            this@SignUpActivity,
-                            task.exception!!.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+            viewModel.createAccountWithEmailAndPassword(email, password)
         }
     }
 

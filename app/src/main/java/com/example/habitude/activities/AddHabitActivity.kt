@@ -1,8 +1,6 @@
 package com.example.habitude.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.habitude.R
 import com.example.habitude.databinding.ActivityAddHabitBinding
 
 class AddHabitActivity : BaseActivity() {
