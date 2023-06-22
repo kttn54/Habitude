@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_background"
     android:orientation="vertical"
-    tools:context=".activities.SignUpActivity">
+    tools:context=".fragments.SignUpFragment">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarSignUpActivity"
+        android:id="@+id/toolbarSignUpFragment"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">
 
@@ -119,8 +119,9 @@
                     android:paddingBottom="@dimen/btn_paddingTopBottom"
                     android:text="@string/sign_up"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/btn_text_size" />
+                    android:textSize="@dimen/btn_text_size"
+                    app:spinning_bar_color="@color/white"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>

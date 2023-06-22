@@ -1,40 +1,43 @@
-package com.example.habitude.activities
+package com.example.habitude.fragments
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.habitude.R
-import com.example.habitude.databinding.ActivitySignUpBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.example.habitude.firebase.FirestoreClass
 import com.example.habitude.data.User
+import com.example.habitude.databinding.FragmentSignUpBinding
 import com.example.habitude.utils.RegisterValidation
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.RegisterViewModel
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
-private val TAG = "SignUpActivity"
+private val TAG = "SignUpFragment"
 
 @AndroidEntryPoint
-class SignUpActivity: BaseActivity() {
-
-    private lateinit var binding: ActivitySignUpBinding
+class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
+    private lateinit var binding: FragmentSignUpBinding
     private val viewModel by viewModels<RegisterViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySignUpBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentSignUpBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
-
         binding.btnSignUp.setOnClickListener { registerUser() }
     }
 
@@ -43,15 +46,17 @@ class SignUpActivity: BaseActivity() {
      */
     private fun setupActionBar() {
 
-        setSupportActionBar(binding.toolbarSignUpActivity)
+        val appCompatActivity = requireActivity() as AppCompatActivity
 
-        val actionBar = supportActionBar
+        appCompatActivity.setSupportActionBar(binding.toolbarSignUpFragment)
+
+        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
         }
 
-        binding.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressed() }
+        binding.toolbarSignUpFragment.setNavigationOnClickListener { findNavController().popBackStack() }
 
         lifecycleScope.launchWhenStarted {
             viewModel.register.collect {
@@ -116,13 +121,13 @@ class SignUpActivity: BaseActivity() {
      */
     fun userRegisteredSuccess() {
         Toast.makeText(
-            this@SignUpActivity,
+            requireContext(),
             "You have successfully registered.",
             Toast.LENGTH_SHORT
         ).show()
 
         // Hide the progress dialog
-        hideProgressDialog()
+        // hideProgressDialog()
 
         /*
         Here the new user registered is automatically signed-in so we just sign-out the user from firebase
@@ -130,6 +135,6 @@ class SignUpActivity: BaseActivity() {
         */
         FirebaseAuth.getInstance().signOut()
         // Finish the Sign-Up Screen
-        finish()
+        // finish()
     }
 }

@@ -21,7 +21,6 @@ class SplashActivity : BaseActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        makeSplashFullScreen()
         setSplashTextFont()
         moveToNextActivity()
     }
@@ -50,30 +49,6 @@ class SplashActivity : BaseActivity() {
             }
             finish()
         }, delayMillis)
-    }
-
-    /**
-     * This function ensures the app's content is properly displayed and system UI is hidden
-     * so that the app is full screen. It can be shown through swiping if needed.
-    **/
-    private fun makeSplashFullScreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Use WindowInsetsController on Android R and above
-            // setDecorFitsSystemWindows(false) sets a flag that ensures the space normally reserved for
-            // status/navigation bars are not used.
-            window.setDecorFitsSystemWindows(false)
-            val controller = window.insetsController
-            if (controller != null) {
-                controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            // Use the deprecated method for older versions of Android
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
     }
 
     /**

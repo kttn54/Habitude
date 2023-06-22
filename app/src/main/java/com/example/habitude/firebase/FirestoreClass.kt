@@ -21,7 +21,7 @@ class FirestoreClass {
      */
     fun registerUser(activity: SignUpActivity, userInfo: User) {
 
-        mFireStore.collection(Constants.USERS)
+        mFireStore.collection(Constants.USER_COLLECTION)
             // Document ID for users fields. Here the document it is the User ID.
             .document(getCurrentUserID())
             // Here the userInfo are Field and the SetOption is set to merge. It is for if we wants to merge
@@ -45,7 +45,7 @@ class FirestoreClass {
      * A function for signing in the user.
      */
     fun signInUser(activity: Activity) {
-        mFireStore.collection(Constants.USERS)
+        mFireStore.collection(Constants.USER_COLLECTION)
             // Document ID for users fields. Here the document it is the User ID.
             .document(getCurrentUserID())
             // Here the userInfo are Field and the SetOption is set to merge. It is for if we wants to merge
