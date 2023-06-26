@@ -1,15 +1,7 @@
 package com.example.habitude.firebase
 
-import android.app.Activity
-import android.util.Log
-import com.example.habitude.activities.MainActivity
-import com.example.habitude.activities.SignInActivity
-import com.example.habitude.activities.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import com.example.habitude.data.User
-import com.example.habitude.utils.Constants
 
 class FirestoreClass {
 
@@ -19,7 +11,7 @@ class FirestoreClass {
     /**
      * A function to make an entry of the registered user in the Firestore database.
      */
-    fun registerUser(activity: SignUpActivity, userInfo: User) {
+/*    fun registerUser(activity: SignUpActivity, userInfo: User) {
 
         mFireStore.collection(Constants.USER_COLLECTION)
             // Document ID for users fields. Here the document it is the User ID.
@@ -40,11 +32,12 @@ class FirestoreClass {
                 )
             }
     }
+    */
 
     /**
      * A function for signing in the user.
      */
-    fun signInUser(activity: Activity) {
+/*    fun signInUser(activity: Activity) {
         mFireStore.collection(Constants.USER_COLLECTION)
             // Document ID for users fields. Here the document it is the User ID.
             .document(getCurrentUserID())
@@ -79,6 +72,7 @@ class FirestoreClass {
                 )
             }
     }
+    */
 
     /**
      * A function for getting the user id of current logged user.

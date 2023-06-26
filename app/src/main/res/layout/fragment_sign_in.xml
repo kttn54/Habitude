@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_background"
     android:orientation="vertical"
-    tools:context=".fragments.SignInFragment">
+    tools:context=".fragments.signinsignup.SignInFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarSignInActivity"
@@ -85,6 +85,15 @@
                         android:inputType="textPassword"
                         android:textSize="@dimen/et_text_size" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tv_update_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/profile_change_forgot_password" />
 
                 <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/btnSignIn"

@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.gms:google-services:4.3.15'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
 
     apply plugin : "kotlin-kapt"
 
@@ -64,6 +65,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     // Firebase Messaging Dependency
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
+
+    //Coroutines with Firebase
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.1'
 
     // Circular image view dependency
     implementation 'de.hdodenhof:circleimageview:3.1.0'

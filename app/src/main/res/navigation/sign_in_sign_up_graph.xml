@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.habitude.fragments.SplashFragment"
+        android:name="com.example.habitude.fragments.signinsignup.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/introFragment"
-        android:name="com.example.habitude.fragments.IntroFragment"
+        android:name="com.example.habitude.fragments.signinsignup.IntroFragment"
         android:label="IntroFragment"
         tools:layout="@layout/fragment_intro">
         <action
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.example.habitude.fragments.SignInFragment"
+        android:name="com.example.habitude.fragments.signinsignup.SignInFragment"
         android:label="SignInFragment"
         tools:layout="@layout/fragment_sign_in">
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.habitude.fragments.SignUpFragment"
+        android:name="com.example.habitude.fragments.signinsignup.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up">
         <action

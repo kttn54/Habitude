@@ -10,6 +10,11 @@ import com.example.habitude.R
 import com.example.habitude.databinding.ActivityIntroductionBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * A class that shows the Introduction Activity, which is displayed after the Splash screen.
+ * It presents users with the options of signing in or signing up.
+ */
+
 @AndroidEntryPoint
 class IntroductionActivity: AppCompatActivity() {
 

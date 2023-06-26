@@ -31,7 +31,7 @@
             android:name=".activities.IntroActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.HabitActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SignUpActivity"

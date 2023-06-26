@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_splash_background"
     android:gravity="center"
-    tools:context=".fragments.SplashFragment">
+    tools:context=".fragments.signinsignup.SplashFragment">
 
     <TextView
         android:id="@+id/tv_app_name"

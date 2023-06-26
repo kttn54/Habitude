@@ -7,7 +7,7 @@
     android:background="@drawable/intro_background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".fragments.IntroFragment">
+    tools:context=".fragments.signinsignup.IntroFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
