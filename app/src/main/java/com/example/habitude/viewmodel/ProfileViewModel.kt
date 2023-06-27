@@ -4,7 +4,9 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media
 import android.provider.MediaStore.Images.Media.getBitmap
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +17,7 @@ import com.example.habitude.utils.validateEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +34,7 @@ import com.example.habitude.HabitudeApplication as HabitudeApplication
 class ProfileViewModel @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val storage: StorageReference,
+    private val firebaseStorage: StorageReference,
     app: Application
 ): AndroidViewModel(app) {
 
@@ -66,28 +69,29 @@ class ProfileViewModel @Inject constructor(
                     _user.emit(Resource.Error(it.message.toString()))
                 }
             }
+    }
 
-        fun updateUser(user: User, imageUri: Uri?) {
-            val areInputsValid = validateEmail(user.email) is RegisterValidation.Success
-                    && user.name.trim().isNotEmpty()
+    fun updateUser(user: User, imageUri: Uri?) {
+        val areInputsValid = validateEmail(user.email) is RegisterValidation.Success
+                && user.name.trim().isNotEmpty()
 
-            if (!areInputsValid) {
-                viewModelScope.launch {
-                    _user.emit((Resource.Error("Check your inputs")))
-                }
-            }
-
+        if (!areInputsValid) {
             viewModelScope.launch {
-                _updateInfo.emit(Resource.Loading())
+                _user.emit((Resource.Error("Check your inputs")))
             }
-            
-            if (imageUri == null) {
-                saveUserInformation(user, true)
-            } else {
-                saveUserInformationWithNewImage(user, imageUri)
-            }
-
         }
+
+        viewModelScope.launch {
+            _updateInfo.emit(Resource.Loading())
+        }
+
+        if (imageUri == null) {
+            saveUserInformation(user, true)
+        } else {
+            saveUserInformationWithNewImage(user, imageUri)
+        }
+
+    }
 
 /*        firestore.collection("user").document(auth.uid!!)
             .addSnapshotListener { value, error ->
@@ -105,19 +109,19 @@ class ProfileViewModel @Inject constructor(
                 }
             }
 */
-    }
 
     // To upload any image on the Firebase storage, we want to get the byte array of the image.
     // Need to get the bitmap of the image
     private fun saveUserInformationWithNewImage(user: User, imageUri: Uri) {
         viewModelScope.launch {
             try {
-                val imageBitmap = getBitmap(getApplication<HabitudeApplication>().contentResolver, imageUri)
+                val imageBitmap = Media.getBitmap(getApplication<HabitudeApplication>().contentResolver, imageUri)
                 // Compress the image
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 96, byteArrayOutputStream)
                 val imageByteArray = byteArrayOutputStream.toByteArray()
-                val imageDirectory = storage.child("profileImages/${firebaseAuth.uid}/${UUID.randomUUID()}")
+                val fileName = "${System.currentTimeMillis()}_${imageUri.lastPathSegment}"
+                val imageDirectory = firebaseStorage.child("profileImages/${firebaseAuth.uid}/$fileName")
                 val result = imageDirectory.putBytes(imageByteArray).await()
                 val imageUrl = result.storage.downloadUrl.await().toString()
                 saveUserInformation(user.copy(image = imageUrl), false)
@@ -168,5 +172,5 @@ class ProfileViewModel @Inject constructor(
                         _resetPassword.emit(Resource.Error(it.message.toString()))
                     }
                 }
-        }
     }
+}

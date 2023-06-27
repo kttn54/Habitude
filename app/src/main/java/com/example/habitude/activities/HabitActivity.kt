@@ -27,6 +27,8 @@ class HabitActivity : BaseActivity() {
         val navController = findNavController(R.id.habitHostFragment)
         binding.bottomNavigation.setupWithNavController(navController)
 
+
+
         // FirestoreClass().signInUser(this)
     }
 

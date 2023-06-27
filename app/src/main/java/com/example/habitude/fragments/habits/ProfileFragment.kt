@@ -3,11 +3,14 @@ package com.example.habitude.fragments.habits
 import android.content.Intent
 import android.graphics.Color.BLACK
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startActivity
@@ -18,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.habitude.R
 import com.example.habitude.activities.IntroductionActivity
+import com.example.habitude.data.User
 import com.example.habitude.databinding.FragmentProfileBinding
 import com.example.habitude.dialog.setupBottomSheetDialog
 import com.example.habitude.utils.Resource
@@ -31,6 +35,22 @@ import kotlinx.coroutines.flow.collectLatest
 class ProfileFragment: Fragment() {
     private lateinit var binding: FragmentProfileBinding
     val viewModel by viewModels<ProfileViewModel>()
+
+    private lateinit var imageActivityResultLauncher: ActivityResultLauncher<Intent>
+
+    private var imageUri: Uri? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        imageActivityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                imageUri = it.data?.data
+                Glide.with(this)
+                    .load(imageUri)
+                    .into(binding.civUser)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,15 +77,27 @@ class ProfileFragment: Fragment() {
             binding.tvName.visibility = View.GONE
             binding.etName.visibility = View.VISIBLE
             binding.civEdit.visibility = View.VISIBLE
+            binding.etName.setText("${binding.tvName.text}")
         }
 
         // TODO: Update name
         binding.btnSaveProfile.setOnClickListener {
-            binding.btnSaveProfile.visibility = View.GONE
-            binding.btnEditProfile.visibility = View.VISIBLE
             binding.tvName.visibility = View.VISIBLE
             binding.etName.visibility = View.INVISIBLE
             binding.civEdit.visibility = View.GONE
+
+            val name = binding.etName.text.toString().trim()
+            val email = binding.etEmail.text.toString().trim()
+            val user = User(name, email)
+            viewModel.updateUser(user, imageUri)
+
+            showUserInformation(user)
+        }
+
+        binding.civEdit.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            imageActivityResultLauncher.launch(intent)
         }
 
         binding.tvUpdatePassword.setOnClickListener {
@@ -97,13 +129,7 @@ class ProfileFragment: Fragment() {
                         binding.progressbarProfile.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
-                        Glide.with(requireView())
-                            .load(it.data!!.image)
-                            .error(R.drawable.no_image_small)
-                            .into(binding.civUser)
-
-                        //binding.etName.text = "${it.data.name}"
-
+                        showUserInformation(it.data!!)
                         binding.progressbarProfile.visibility = View.GONE
                     }
                     is Resource.Error -> {
@@ -113,6 +139,37 @@ class ProfileFragment: Fragment() {
                     else -> Unit
                 }
             }
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.updateInfo.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+                        binding.btnSaveProfile.startAnimation()
+                    }
+                    is Resource.Success -> {
+                        binding.btnSaveProfile.revertAnimation()
+                        binding.btnSaveProfile.visibility = View.GONE
+                        binding.btnEditProfile.visibility = View.VISIBLE
+                    }
+                    is Resource.Error -> {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    private fun showUserInformation(data: User) {
+        binding.apply {
+            Glide.with(this@ProfileFragment)
+                .load(data.image)
+                .error(R.drawable.test_image)
+                .into(binding.civUser)
+
+            tvName.text = data.name
+            etEmail.setText(data.email)
         }
     }
 }

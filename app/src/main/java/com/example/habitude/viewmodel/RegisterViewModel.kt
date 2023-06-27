@@ -1,6 +1,7 @@
 package com.example.habitude.viewmodel
 
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.example.habitude.data.User
 import com.example.habitude.utils.*
@@ -42,7 +43,6 @@ class RegisterViewModel @Inject constructor(
                 .addOnSuccessListener {
                     it.user?.let {
                         saveUserInfo(it.uid, user)
-                        //
                     }
                 }.addOnFailureListener {
                     _register.value = Resource.Error(it.message.toString())
@@ -77,46 +77,3 @@ class RegisterViewModel @Inject constructor(
         return shouldRegister
     }
 }
-
-
-/*
-    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val firebaseUser: FirebaseUser = task.result!!.user!!
-                val registeredEmail = firebaseUser.email!!
-
-                val user = User(firebaseUser.uid, name, registeredEmail)
-
-                FirestoreClass().registerUser(this@SignUpActivity, user)
-            } else {
-                Toast.makeText(
-                    this@SignUpActivity,
-                    task.exception!!.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-
-                if (validateForm(name, email, password)) {
-            showProgressDialog(resources.getString(R.string.please_wait))
-
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val firebaseUser: FirebaseUser = task.result!!.user!!
-                        val registeredEmail = firebaseUser.email!!
-
-                        val user = User(firebaseUser.uid, name, registeredEmail)
-
-                        FirestoreClass().registerUser(this@SignUpActivity, user)
-                    } else {
-                        Toast.makeText(
-                            this@SignUpActivity,
-                            task.exception!!.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-        }
-        */

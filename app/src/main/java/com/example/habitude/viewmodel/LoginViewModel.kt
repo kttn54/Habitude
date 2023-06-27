@@ -32,8 +32,7 @@ class LoginViewModel @Inject constructor(
     val snackbarEvent: LiveData<SnackbarEvent> = _snackbarEvent
 
     fun login(email: String, password: String) {
-
-        viewModelScope.launch { _login.emit(Resource.Loading())}
+        viewModelScope.launch { _login.emit(Resource.Loading()) }
 
         if (validateForm(email, password)) {
             firebaseAuth.signInWithEmailAndPassword(

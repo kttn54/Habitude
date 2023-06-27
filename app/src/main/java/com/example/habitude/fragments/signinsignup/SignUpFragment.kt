@@ -66,6 +66,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
                     }
                     is Resource.Success -> {
                         binding.btnSignUp.revertAnimation()
+                        userRegisteredSuccess()
                     }
                     is Resource.Error -> {
                         Log.e(TAG, it.message.toString())
@@ -118,7 +119,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
      * A function to be called the user is registered successfully and
      * an entry is made in the Firestore database.
      */
-    fun userRegisteredSuccess() {
+    private fun userRegisteredSuccess() {
         Toast.makeText(
             requireContext(),
             "You have successfully registered.",
