@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             tools:text="Habit 1" />
 
         <LinearLayout
-            android:id="@+id/llHabitStreak"
+            android:id="@+id/ll_habit_streak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -32,7 +32,7 @@
                 tools:text="Streak: " />
 
             <TextView
-                android:id="@+id/tvHabitStreak"
+                android:id="@+id/tv_habit_streak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="+5" />
@@ -50,7 +50,7 @@
                 tools:text="Overall: " />
 
             <TextView
-                android:id="@+id/tvHabitOverall"
+                android:id="@+id/tv_habit_overall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="50%" />
@@ -63,7 +63,7 @@
                 android:text="|" />
 
             <TextView
-                android:id="@+id/tvHabitFriend"
+                android:id="@+id/tv_habit_friend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="1" />
@@ -82,7 +82,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvDayOne"
+                android:id="@+id/tv_day_one"
                 android:layout_width="@dimen/habit_day_circle_radius"
                 android:layout_height="@dimen/habit_day_circle_radius"
                 android:layout_margin="@dimen/habit_day_circle_margin"
@@ -156,7 +156,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="9dp"
+            android:layout_marginStart="14dp"
             app:layout_constraintTop_toTopOf="@+id/tvDaySeven"
             android:text="TODAY"
             android:textSize="8sp"

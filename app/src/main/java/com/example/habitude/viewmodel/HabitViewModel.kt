@@ -1,5 +1,6 @@
 package com.example.habitude.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitude.data.Habit
@@ -21,6 +22,9 @@ class HabitViewModel @Inject constructor(
 
     private val _addHabit = MutableStateFlow<Resource<Habit>>(Resource.Unspecified())
     val addHabit: Flow<Resource<Habit>> = _addHabit
+
+    private val _habits = MutableStateFlow<Resource<ArrayList<Habit>>>(Resource.Unspecified())
+    val habits: Flow<Resource<ArrayList<Habit>>> = _habits
 
     fun saveHabit(habit: Habit) {
         viewModelScope.launch { _addHabit.emit(Resource.Loading()) }
@@ -48,6 +52,27 @@ class HabitViewModel @Inject constructor(
                 }
             }.addOnFailureListener {
                 _addHabit.value = Resource.Error(it.message.toString())
+            }
+    }
+
+    fun getHabits() {
+        viewModelScope.launch { _habits.emit(Resource.Loading()) }
+
+        val userId = firebaseAuth.currentUser?.uid
+
+        val query = db.collection(HABIT_COLLECTION)
+            .whereEqualTo("userId", userId)
+
+        query.get()
+            .addOnSuccessListener { querySnapshot ->
+                val habitList = mutableListOf<Habit>()
+                for (document in querySnapshot) {
+                    val habit = document.toObject(Habit::class.java)
+                    habitList.add(habit)
+                }
+                _habits.value = Resource.Success(ArrayList(habitList))
+            }.addOnFailureListener {
+                _habits.value = Resource.Error(it.message.toString())
             }
     }
 }

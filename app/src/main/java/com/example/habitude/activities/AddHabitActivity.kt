@@ -9,9 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.habitude.data.Habit
 import com.example.habitude.databinding.ActivityAddHabitBinding
 import com.example.habitude.utils.Resource
-import com.example.habitude.viewmodel.AddHabitViewModel
 import com.example.habitude.viewmodel.HabitViewModel
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

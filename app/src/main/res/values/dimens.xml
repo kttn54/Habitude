@@ -63,6 +63,6 @@
     <dimen name="create_board_btn_marginTop">30dp</dimen>
 
     <dimen name="habit_day_circle_margin">5dp</dimen>
-    <dimen name="habit_day_circle_radius">35dp</dimen>
-    <dimen name="habit_day_circle_text_size">11sp</dimen>
+    <dimen name="habit_day_circle_radius">45dp</dimen>
+    <dimen name="habit_day_circle_text_size">13sp</dimen>
 </resources>
