@@ -2,10 +2,16 @@ package com.example.habitude.fragments.signinsignup
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -34,6 +40,15 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.etEmailSignIn.requestFocus()
+        binding.etPasswordSignIn.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KEYCODE_ENTER)) {
+                binding.btnSignIn.performClick() // Programmatically perform the sign-in button click action
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
 
         viewModel.snackbarEvent.observe(viewLifecycleOwner) { snackbarEvent ->
             snackbarEvent?.let {

@@ -1,6 +1,7 @@
 package com.example.habitude.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitude.data.Habit
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HabitViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val db: FirebaseFirestore
+    private val firestore: FirebaseFirestore
 ): ViewModel() {
 
     private val _addHabit = MutableStateFlow<Resource<Habit>>(Resource.Unspecified())
@@ -26,24 +27,27 @@ class HabitViewModel @Inject constructor(
     private val _habits = MutableStateFlow<Resource<ArrayList<Habit>>>(Resource.Unspecified())
     val habits: Flow<Resource<ArrayList<Habit>>> = _habits
 
+    private val _updateHabitDay = MutableStateFlow<Resource<Boolean>>(Resource.Unspecified())
+    val updateHabitDay: Flow<Resource<Boolean>> = _updateHabitDay
+
     fun saveHabit(habit: Habit) {
         viewModelScope.launch { _addHabit.emit(Resource.Loading()) }
 
         val userId = firebaseAuth.currentUser?.uid
 
-        val query = db.collection(HABIT_COLLECTION)
+        val query = firestore.collection(HABIT_COLLECTION)
             .whereEqualTo("userId", userId)
             .whereEqualTo("name", habit.name)
 
         query.get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
-                    val updatedHabit = habit.copy(userId = userId.orEmpty())
+                    val habitRef = firestore.collection(HABIT_COLLECTION).document()
+                    val updatedHabit = habit.copy(userId = userId.orEmpty(), habitId = habitRef.id)
 
-                    db.collection(HABIT_COLLECTION)
-                        .add(updatedHabit)
+                    habitRef.set(updatedHabit)
                         .addOnSuccessListener {
-                            _addHabit.value = Resource.Success(habit)
+                            _addHabit.value = Resource.Success(updatedHabit)
                         }.addOnFailureListener {
                             _addHabit.value = Resource.Error(it.message.toString())
                         }
@@ -60,7 +64,7 @@ class HabitViewModel @Inject constructor(
 
         val userId = firebaseAuth.currentUser?.uid
 
-        val query = db.collection(HABIT_COLLECTION)
+        val query = firestore.collection(HABIT_COLLECTION)
             .whereEqualTo("userId", userId)
 
         query.get()
@@ -68,11 +72,24 @@ class HabitViewModel @Inject constructor(
                 val habitList = mutableListOf<Habit>()
                 for (document in querySnapshot) {
                     val habit = document.toObject(Habit::class.java)
+                    habit.habitId = document.id
                     habitList.add(habit)
                 }
                 _habits.value = Resource.Success(ArrayList(habitList))
             }.addOnFailureListener {
                 _habits.value = Resource.Error(it.message.toString())
             }
+    }
+
+    // Update the habit data in Firebase
+    fun updateHabitDay(habit: Habit, dayIndex: Int) {
+        firestore.runTransaction { transaction ->
+            val documentRef = firestore.collection(HABIT_COLLECTION).document(habit.habitId)
+            transaction.set(documentRef, habit)
+        }.addOnSuccessListener {
+            _updateHabitDay.value = Resource.Success(true)
+        }.addOnFailureListener {
+            _updateHabitDay.value = Resource.Success(false)
+        }
     }
 }

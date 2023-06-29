@@ -3,8 +3,11 @@ package com.example.habitude.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.habitude.data.Habit
 import com.example.habitude.databinding.ActivityAddHabitBinding
@@ -13,7 +16,7 @@ import com.example.habitude.viewmodel.HabitViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddHabitActivity : BaseActivity() {
+class AddHabitActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddHabitBinding
     private val viewModel by viewModels<HabitViewModel>()
@@ -29,6 +32,14 @@ class AddHabitActivity : BaseActivity() {
             val habitName = binding.etHabitName.text.toString().trim()
             val habit = Habit(habitName)
             viewModel.saveHabit(habit)
+        }
+
+        binding.etHabitName.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                binding.btnAddHabit.performClick() // Programmatically perform the sign-in button click action
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
         }
 
         lifecycleScope.launchWhenStarted {

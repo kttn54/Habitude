@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val db: FirebaseFirestore
+    private val firestore: FirebaseFirestore
 ): ViewModel() {
 
     private val _register = MutableStateFlow<Resource<User>>(Resource.Unspecified())
@@ -58,7 +58,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun saveUserInfo(userUid: String, user: User) {
-        db.collection(USER_COLLECTION)
+        firestore.collection(USER_COLLECTION)
             .document(userUid)
             .set(user)
             .addOnSuccessListener {

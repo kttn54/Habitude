@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitude.data.User
+import com.example.habitude.utils.Constants.USER_COLLECTION
 import com.example.habitude.utils.RegisterValidation
 import com.example.habitude.utils.Resource
 import com.example.habitude.utils.validateEmail
@@ -56,7 +57,8 @@ class ProfileViewModel @Inject constructor(
             _user.emit((Resource.Loading()))
         }
 
-        firestore.collection("user").document(firebaseAuth.uid!!).get()
+        firestore.collection(USER_COLLECTION)
+            .document(firebaseAuth.uid!!).get()
             .addOnSuccessListener {
                 val user = it.toObject(User::class.java)
                 user?.let {

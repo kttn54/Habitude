@@ -27,7 +27,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment: Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var rvHabits: RecyclerView
     private lateinit var habitAdapter: HabitAdapter
     private var habitList: ArrayList<Habit> = ArrayList()
     private val viewModel by viewModels<HabitViewModel>()
@@ -90,6 +89,10 @@ class HomeFragment: Fragment() {
                     else -> Unit
                 }
             }
+        }
+
+        habitAdapter.setOnCircleClickListener { habit, dayIndex ->
+            viewModel.updateHabitDay(habit, dayIndex)
         }
     }
 

@@ -31,5 +31,8 @@
     <color name="g_text_hint">#969899</color>
     <color name="g_orange">#F8BA00</color>
     <color name="g_gray">#D0D0D0</color>
+    <color name="g_green">#BFF4BE</color>
+
+
 
 </resources>

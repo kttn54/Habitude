@@ -1,6 +1,7 @@
 package com.example.habitude.activities
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.habitude.R
@@ -13,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 
 @AndroidEntryPoint
-class HabitActivity : BaseActivity() {
+class HabitActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHabitBinding
     private lateinit var bindingNav: NavHeaderMainBinding
