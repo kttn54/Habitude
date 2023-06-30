@@ -15,54 +15,62 @@
 
     <EditText
         android:id="@+id/et_edit_habit_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="10dp"
         android:textSize="22sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Habit Name"/>
+        android:hint="Habit Name"
+        android:layout_weight="1"/>
 
     <CalendarView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:firstDayOfWeek="2" />
+        android:firstDayOfWeek="2"
+        android:layout_weight="5"/>
 
-    <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-        android:id="@+id/btn_save_habit"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/btn_marginStartEnd"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="@dimen/btn_marginStartEnd"
-        android:background="@drawable/shape_button_rounded"
-        android:gravity="center"
-        android:paddingTop="@dimen/btn_paddingTopBottom"
-        android:paddingBottom="@dimen/btn_paddingTopBottom"
-        android:text="@string/save_habit"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/btn_text_size"
-        app:spinning_bar_color="@color/white"/>
+        android:layout_weight="0.1"
+        android:orientation="vertical">
 
-    <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-        android:id="@+id/btn_delete_habit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/btn_marginStartEnd"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="@dimen/btn_marginStartEnd"
-        android:background="@drawable/shape_button_rounded_red"
-        android:gravity="center"
-        android:paddingTop="@dimen/btn_paddingTopBottom"
-        android:paddingBottom="@dimen/btn_paddingTopBottom"
-        android:text="@string/delete_habit"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/btn_text_size"
-        app:spinning_bar_color="@color/white"/>
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/btn_save_habit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/btn_marginStartEnd"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="@dimen/btn_marginStartEnd"
+            android:background="@drawable/shape_button_rounded"
+            android:gravity="center"
+            android:paddingTop="@dimen/btn_paddingTopBottom"
+            android:paddingBottom="@dimen/btn_paddingTopBottom"
+            android:text="@string/save_habit"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_text_size"
+            app:spinning_bar_color="@color/white" />
 
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/btn_delete_habit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/btn_marginStartEnd"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="@dimen/btn_marginStartEnd"
+            android:background="@drawable/shape_button_rounded_red"
+            android:gravity="center"
+            android:paddingTop="@dimen/btn_paddingTopBottom"
+            android:paddingBottom="@dimen/btn_paddingTopBottom"
+            android:text="@string/delete_habit"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_text_size"
+            app:spinning_bar_color="@color/white" />
+    </LinearLayout>
 </LinearLayout>

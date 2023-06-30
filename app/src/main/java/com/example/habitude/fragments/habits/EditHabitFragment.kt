@@ -1,6 +1,8 @@
 package com.example.habitude.fragments.habits
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,7 @@ import com.example.habitude.utils.Constants.HABIT_DELETED
 import com.example.habitude.utils.Constants.HABIT_OBJECT
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
+import com.google.android.play.integrity.internal.c
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,10 +30,6 @@ class EditHabitFragment : Fragment() {
     private val viewModel by viewModels<HabitViewModel>()
     private var habit: Habit? = null
     private var updatedHabit: Habit? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +47,12 @@ class EditHabitFragment : Fragment() {
         habit = arguments?.getParcelable(HABIT_OBJECT)
 
         binding.etEditHabitName.setText(habit!!.name)
+
+        binding.calendarView.setOnDateChangeListener { _, year, month, day ->
+            val selectedDate = "$day-${month + 1}-$year"
+            Log.e("test","selectedDate is $selectedDate")
+            handleDateSelection(selectedDate)
+        }
 
         binding.btnSaveHabit.setOnClickListener {
             val editedName = binding.etEditHabitName.text.toString()
@@ -96,6 +101,19 @@ class EditHabitFragment : Fragment() {
                     else -> Unit
                 }
             }
+        }
+    }
+
+    private fun handleDateSelection(selectedDate: String) {
+        val selectBackground = R.drawable.ic_habit_circle_completed
+        val unselectBackground = R.drawable.ic_habit_circle
+
+        val isDateSelected = true
+
+        if (isDateSelected) {
+            binding.calendarView.setDateBackgroundColor(Color.BLACK)
+        } else {
+            binding.calendarView.setBackgroundColor(Color.BLACK)
         }
     }
 
