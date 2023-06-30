@@ -1,7 +1,5 @@
 package com.example.habitude.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitude.data.Habit
@@ -30,7 +28,13 @@ class HabitViewModel @Inject constructor(
     private val _updateHabitDay = MutableStateFlow<Resource<Boolean>>(Resource.Unspecified())
     val updateHabitDay: Flow<Resource<Boolean>> = _updateHabitDay
 
-    fun saveHabit(habit: Habit) {
+    private val _updateHabit = MutableStateFlow<Resource<Habit>>(Resource.Unspecified())
+    val updateHabit: Flow<Resource<Habit>> = _updateHabit
+
+    private val _deleteHabit = MutableStateFlow<Resource<Boolean>>(Resource.Unspecified())
+    val deleteHabit: Flow<Resource<Boolean>> = _deleteHabit
+
+    fun addHabit(habit: Habit) {
         viewModelScope.launch { _addHabit.emit(Resource.Loading()) }
 
         val userId = firebaseAuth.currentUser?.uid
@@ -47,15 +51,15 @@ class HabitViewModel @Inject constructor(
 
                     habitRef.set(updatedHabit)
                         .addOnSuccessListener {
-                            _addHabit.value = Resource.Success(updatedHabit)
+                            viewModelScope.launch { _addHabit.emit(Resource.Success(updatedHabit)) }
                         }.addOnFailureListener {
-                            _addHabit.value = Resource.Error(it.message.toString())
+                            viewModelScope.launch { _addHabit.emit(Resource.Error(it.message.toString())) }
                         }
                 } else {
-                    _addHabit.value = Resource.Error("A habit with the same name already exists.")
+                    viewModelScope.launch { _addHabit.emit(Resource.Error("A habit with the same name already exists.")) }
                 }
             }.addOnFailureListener {
-                _addHabit.value = Resource.Error(it.message.toString())
+                viewModelScope.launch { _addHabit.emit(Resource.Error(it.message.toString())) }
             }
     }
 
@@ -63,7 +67,6 @@ class HabitViewModel @Inject constructor(
         viewModelScope.launch { _habits.emit(Resource.Loading()) }
 
         val userId = firebaseAuth.currentUser?.uid
-
         val query = firestore.collection(HABIT_COLLECTION)
             .whereEqualTo("userId", userId)
 
@@ -75,21 +78,48 @@ class HabitViewModel @Inject constructor(
                     habit.habitId = document.id
                     habitList.add(habit)
                 }
-                _habits.value = Resource.Success(ArrayList(habitList))
+                viewModelScope.launch { _habits.emit(Resource.Success(ArrayList(habitList))) }
             }.addOnFailureListener {
-                _habits.value = Resource.Error(it.message.toString())
+                viewModelScope.launch { _habits.emit(Resource.Error(it.message.toString())) }
             }
     }
 
     // Update the habit data in Firebase
-    fun updateHabitDay(habit: Habit, dayIndex: Int) {
+    fun updateHabitDay(habit: Habit) {
+        viewModelScope.launch { _updateHabitDay.emit(Resource.Loading()) }
+
         firestore.runTransaction { transaction ->
             val documentRef = firestore.collection(HABIT_COLLECTION).document(habit.habitId)
             transaction.set(documentRef, habit)
         }.addOnSuccessListener {
-            _updateHabitDay.value = Resource.Success(true)
+            viewModelScope.launch { _updateHabitDay.emit(Resource.Success(true)) }
         }.addOnFailureListener {
-            _updateHabitDay.value = Resource.Success(false)
+            viewModelScope.launch { _updateHabitDay.emit(Resource.Error("Update failed.")) }
         }
+    }
+
+    fun updateHabit(habit: Habit) {
+        viewModelScope.launch { _updateHabit.emit(Resource.Loading()) }
+
+        firestore.runTransaction { transaction ->
+            val documentRef = firestore.collection(HABIT_COLLECTION).document(habit.habitId)
+            transaction.set(documentRef, habit)
+        }.addOnSuccessListener {
+            viewModelScope.launch { _updateHabit.emit(Resource.Success(habit)) }
+        }.addOnFailureListener {
+            viewModelScope.launch { _updateHabit.emit(Resource.Error("Update failed.")) }
+        }
+    }
+
+    fun deleteHabit(habit: Habit) {
+        viewModelScope.launch { _deleteHabit.emit(Resource.Loading()) }
+
+        firestore.collection(HABIT_COLLECTION).document(habit.habitId)
+            .delete()
+            .addOnSuccessListener {
+                viewModelScope.launch { _deleteHabit.emit(Resource.Success(true)) }
+            }.addOnFailureListener {
+                viewModelScope.launch { _deleteHabit.emit(Resource.Error(it.message.toString())) }
+            }
     }
 }

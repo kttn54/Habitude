@@ -9,15 +9,31 @@
         android:id="@+id/homeFragment"
         android:name="com.example.habitude.fragments.habits.HomeFragment"
         android:label="HomeFragment"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_editHabitFragment"
+            app:destination="@id/editHabitFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addHabitFragment"
+            app:destination="@id/addHabitFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.habitude.fragments.habits.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/fragment_profile"/>
     <fragment
-        android:id="@+id/messagesFragment"
-        android:name="com.example.habitude.fragments.habits.MessagesFragment"
-        android:label="MessagesFragment"
-        tools:layout="@layout/fragment_messages"/>
+        android:id="@+id/editHabitFragment"
+        android:name="com.example.habitude.fragments.habits.EditHabitFragment"
+        android:label="fragment_edit_habit"
+        tools:layout="@layout/fragment_edit_habit" >
+        <action
+            android:id="@+id/action_editHabitFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addHabitFragment"
+        android:name="com.example.habitude.fragments.habits.AddHabitFragment"
+        android:label="fragment_add_habit"
+        tools:layout="@layout/fragment_add_habit" />
 </navigation>

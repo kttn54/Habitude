@@ -1,12 +1,21 @@
 package com.example.habitude.background
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.hilt.work.HiltWorker
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.habitude.HabitudeApplication
 import com.example.habitude.data.Habit
 import com.example.habitude.utils.Constants.HABIT_COLLECTION
+import com.example.habitude.utils.Resource
+import com.example.habitude.viewmodel.HabitViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -18,14 +27,15 @@ import kotlinx.coroutines.withContext
 class UpdateDataWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val firestore: FirebaseFirestore
     ) : CoroutineWorker(context, params) {
 
+
+
     override suspend fun doWork(): Result {
-        Log.e("test", "this worked22")
         return withContext(Dispatchers.IO) {
             try {
-                Log.e("test", "this worked")
+                Log.e("test","doWork is executing")
+                val firestore = FirebaseFirestore.getInstance()
                 val habitsCollection = firestore.collection(HABIT_COLLECTION)
                 val habitsQuery = habitsCollection.get().await()
                 val habits = habitsQuery.toObjects(Habit::class.java)
@@ -42,9 +52,9 @@ class UpdateDataWorker @AssistedInject constructor(
 
                     habitsCollection.document(habit.habitId).set(habit).await()
                 }
+
                 Result.success()
             } catch (e: Exception) {
-                Log.e("test", "worker failed")
                 Result.failure()
             }
         }

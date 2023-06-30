@@ -65,9 +65,8 @@ class LoginViewModel @Inject constructor(
     }
 
     fun resetPassword(email: String) {
-        viewModelScope.launch {
-            _resetPassword.emit(Resource.Loading())
-        }
+        viewModelScope.launch { _resetPassword.emit(Resource.Loading()) }
+
         firebaseAuth.sendPasswordResetEmail(email)
             .addOnSuccessListener {
                 viewModelScope.launch {
@@ -78,5 +77,15 @@ class LoginViewModel @Inject constructor(
                     _resetPassword.emit(Resource.Error(it.message.toString()))
                 }
             }
+    }
+
+    fun getCurrentUserId(): String {
+        var currentUser = firebaseAuth.currentUser
+        var currentUserId = ""
+
+        if (currentUser != null) {
+            currentUserId = currentUser.uid
+        }
+        return currentUserId
     }
 }

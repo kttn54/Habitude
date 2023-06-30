@@ -20,28 +20,26 @@
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
             tools:node="remove" />
+
         <activity
             android:name=".activities.IntroductionActivity"
-            android:exported="false"
-            android:theme="@style/Theme.HabitudeSplash"/>
-<!--            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        <!--</activity>-->
-        <activity
-            android:name=".activities.AddHabitActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.HabitActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.HabitudeSplash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.HabitActivity"
+            android:exported="false" />
+<!--            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
     </application>
 
 </manifest>

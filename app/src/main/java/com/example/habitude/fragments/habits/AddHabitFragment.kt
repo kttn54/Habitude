@@ -1,37 +1,52 @@
-package com.example.habitude.activities
+package com.example.habitude.fragments.habits
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.habitude.R
+import com.example.habitude.activities.HabitActivity
 import com.example.habitude.data.Habit
-import com.example.habitude.databinding.ActivityAddHabitBinding
+import com.example.habitude.databinding.FragmentAddHabitBinding
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddHabitActivity : AppCompatActivity() {
+class AddHabitFragment : Fragment() {
 
-    private lateinit var binding: ActivityAddHabitBinding
+    private lateinit var binding: FragmentAddHabitBinding
     private val viewModel by viewModels<HabitViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddHabitBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentAddHabitBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
-
         binding.btnAddHabit.setOnClickListener {
             val habitName = binding.etHabitName.text.toString().trim()
             val habit = Habit(habitName)
-            viewModel.saveHabit(habit)
+            viewModel.addHabit(habit)
         }
 
         binding.etHabitName.setOnEditorActionListener { _, actionId, event ->
@@ -50,11 +65,11 @@ class AddHabitActivity : AppCompatActivity() {
                     }
                     is Resource.Success -> {
                         binding.btnAddHabit.revertAnimation()
-                        startActivity(Intent(this@AddHabitActivity, HabitActivity::class.java))
-                        Toast.makeText(this@AddHabitActivity, "Habit successfully added", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireActivity(), HabitActivity::class.java))
+                        Toast.makeText(requireActivity(), "Habit successfully added", Toast.LENGTH_SHORT).show()
                     }
                     is Resource.Error -> {
-                        Toast.makeText(this@AddHabitActivity, "Error: ${it.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
                     }
                     else -> Unit
                 }
@@ -63,13 +78,16 @@ class AddHabitActivity : AppCompatActivity() {
     }
 
     private fun setupActionBar() {
-        setSupportActionBar(binding.toolbarAddHabitActivity)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        supportActionBar?.title = "Add Habit"
+        val toolbar = binding.toolbarAddHabitActivity
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
+            title = "Add Habit"
+            toolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         binding.toolbarAddHabitActivity.setNavigationOnClickListener {
-            onBackPressed()
+            requireActivity().onBackPressed()
         }
     }
 }

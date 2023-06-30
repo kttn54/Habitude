@@ -16,7 +16,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_marginTop="24dp"
-            android:src="@drawable/test_image"
+            android:src="@drawable/no_image_small"
             app:layout_constraintEnd_toEndOf="@id/guideline2"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="@id/guideline1"

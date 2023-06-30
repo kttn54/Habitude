@@ -5,10 +5,6 @@
         android:icon="@drawable/ic_home"
         android:id="@+id/homeFragment" />
 
-    <item android:title="Messages"
-        android:icon="@drawable/ic_message"
-        android:id="@+id/messagesFragment" />
-
     <item android:title="Profile"
         android:icon="@drawable/ic_profile"
         android:id="@+id/profileFragment" />

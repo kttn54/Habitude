@@ -48,14 +48,8 @@ class ProfileViewModel @Inject constructor(
     private var _updateInfo = MutableStateFlow<Resource<User>>(Resource.Unspecified())
     var updateInfo = _updateInfo.asStateFlow()
 
-    init {
-        getUser()
-    }
-
     fun getUser() {
-        viewModelScope.launch {
-            _user.emit((Resource.Loading()))
-        }
+        viewModelScope.launch { _user.emit((Resource.Loading())) }
 
         firestore.collection(USER_COLLECTION)
             .document(firebaseAuth.uid!!).get()
@@ -83,9 +77,7 @@ class ProfileViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
-            _updateInfo.emit(Resource.Loading())
-        }
+        viewModelScope.launch { _updateInfo.emit(Resource.Loading()) }
 
         if (imageUri == null) {
             saveUserInformation(user, true)
@@ -94,23 +86,6 @@ class ProfileViewModel @Inject constructor(
         }
 
     }
-
-/*        firestore.collection("user").document(auth.uid!!)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    viewModelScope.launch {
-                        _user.emit(Resource.Error(error.message.toString()))
-                    }
-                } else {
-                    val user = value?.toObject(User::class.java)
-                    user?.let {
-                        viewModelScope.launch {
-                            _user.emit(Resource.Success(user))
-                        }
-                    }
-                }
-            }
-*/
 
     // To upload any image on the Firebase storage, we want to get the byte array of the image.
     // Need to get the bitmap of the image
@@ -127,6 +102,7 @@ class ProfileViewModel @Inject constructor(
                 val result = imageDirectory.putBytes(imageByteArray).await()
                 val imageUrl = result.storage.downloadUrl.await().toString()
                 saveUserInformation(user.copy(image = imageUrl), false)
+                Log.e("test", "imageurl is $imageUrl")
             } catch (e: Exception) {
                 viewModelScope.launch {
                     _updateInfo.emit(Resource.Error(e.message.toString()))
@@ -136,6 +112,8 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun saveUserInformation(user: User, shouldRetrieveOldImage: Boolean) {
+        viewModelScope.launch { _updateInfo.emit(Resource.Loading()) }
+
         firestore.runTransaction { transaction ->
             val documentRef = firestore.collection("user").document(firebaseAuth.uid!!)
             if (shouldRetrieveOldImage) {
@@ -161,9 +139,8 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun resetPassword(email: String) {
-        viewModelScope.launch {
-            _resetPassword.emit(Resource.Loading())
-        }
+        viewModelScope.launch { _resetPassword.emit(Resource.Loading()) }
+
         firebaseAuth.sendPasswordResetEmail(email)
                 .addOnSuccessListener {
                     viewModelScope.launch {

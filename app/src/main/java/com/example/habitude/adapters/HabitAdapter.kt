@@ -16,7 +16,8 @@ import kotlin.collections.ArrayList
 
 class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
 
-    private var circleClickListener: ((Habit, Int) -> Unit)? = null
+    private var dayClickListener: ((Habit) -> Unit)? = null
+    lateinit var onItemClick: ((Habit) -> Unit)
 
     fun updateData(newHabitList: ArrayList<Habit>) {
         val previousSize = this.habits.size
@@ -39,44 +40,44 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
                 tvDayOne.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayOneComplete = !habit.isDayOneComplete
-                    onCircleClick(habit, 1)
-                    setCircleBackground(tvDayOne, habit.isDayCompleted(1))
+                    onDayClick(habit)
+                    setDayBackground(tvDayOne, habit.isDayCompleted(1))
                 }
                 tvDayTwo.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayTwoComplete = !habit.isDayTwoComplete
-                    onCircleClick(habit, 2)
-                    setCircleBackground(tvDayTwo, habit.isDayCompleted(2))
+                    onDayClick(habit)
+                    setDayBackground(tvDayTwo, habit.isDayCompleted(2))
                 }
                 tvDayThree.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayThreeComplete = !habit.isDayThreeComplete
-                    onCircleClick(habit, 3)
-                    setCircleBackground(tvDayThree, habit.isDayCompleted(3))
+                    onDayClick(habit)
+                    setDayBackground(tvDayThree, habit.isDayCompleted(3))
                 }
                 tvDayFour.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayFourComplete = !habit.isDayFourComplete
-                    onCircleClick(habit, 4)
-                    setCircleBackground(tvDayFour, habit.isDayCompleted(4))
+                    onDayClick(habit)
+                    setDayBackground(tvDayFour, habit.isDayCompleted(4))
                 }
                 tvDayFive.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayFiveComplete = !habit.isDayFiveComplete
-                    onCircleClick(habit, 5)
-                    setCircleBackground(tvDayFive, habit.isDayCompleted(5))
+                    onDayClick(habit)
+                    setDayBackground(tvDayFive, habit.isDayCompleted(5))
                 }
                 tvDaySix.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDaySixComplete = !habit.isDaySixComplete
-                    onCircleClick(habit, 6)
-                    setCircleBackground(tvDaySix, habit.isDayCompleted(6))
+                    onDayClick(habit)
+                    setDayBackground(tvDaySix, habit.isDayCompleted(6))
                 }
                 tvDaySeven.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDaySevenComplete = !habit.isDaySevenComplete
-                    onCircleClick(habit, 7)
-                    setCircleBackground(tvDaySeven, habit.isDayCompleted(7))
+                    onDayClick(habit)
+                    setDayBackground(tvDaySeven, habit.isDayCompleted(7))
                 }
             }
         }
@@ -100,14 +101,17 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         holder.binding.tvDaySix.text = getDayOfWeekName(dayOfWeek - 5)
         holder.binding.tvDaySeven.text = getDayOfWeekName(dayOfWeek - 6)
 
-        setCircleBackground(holder.binding.tvDayOne, habit.isDayCompleted(1))
-        setCircleBackground(holder.binding.tvDayTwo, habit.isDayCompleted(2))
-        setCircleBackground(holder.binding.tvDayThree, habit.isDayCompleted(3))
-        setCircleBackground(holder.binding.tvDayFour, habit.isDayCompleted(4))
-        setCircleBackground(holder.binding.tvDayFive, habit.isDayCompleted(5))
-        setCircleBackground(holder.binding.tvDaySix, habit.isDayCompleted(6))
-        setCircleBackground(holder.binding.tvDaySeven, habit.isDayCompleted(7))
+        setDayBackground(holder.binding.tvDayOne, habit.isDayCompleted(1))
+        setDayBackground(holder.binding.tvDayTwo, habit.isDayCompleted(2))
+        setDayBackground(holder.binding.tvDayThree, habit.isDayCompleted(3))
+        setDayBackground(holder.binding.tvDayFour, habit.isDayCompleted(4))
+        setDayBackground(holder.binding.tvDayFive, habit.isDayCompleted(5))
+        setDayBackground(holder.binding.tvDaySix, habit.isDayCompleted(6))
+        setDayBackground(holder.binding.tvDaySeven, habit.isDayCompleted(7))
 
+        holder.itemView.setOnClickListener {
+            onItemClick.invoke(habit)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -152,7 +156,7 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         }
     }
 
-    private fun setCircleBackground(circleView: TextView, isCompleted: Boolean) {
+    private fun setDayBackground(circleView: TextView, isCompleted: Boolean) {
         if (isCompleted) {
             circleView.setBackgroundResource(R.drawable.ic_habit_circle_completed)
         } else {
@@ -160,11 +164,11 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         }
     }
 
-    fun setOnCircleClickListener(listener: (Habit, Int) -> Unit) {
-        circleClickListener = listener
+    fun setOnDayClickListener(listener: (Habit) -> Unit) {
+        dayClickListener = listener
     }
 
-    private fun onCircleClick(habit: Habit, dayOfWeek: Int) {
-        circleClickListener?.invoke(habit, dayOfWeek)
+    private fun onDayClick(habit: Habit) {
+        dayClickListener?.invoke(habit)
     }
 }

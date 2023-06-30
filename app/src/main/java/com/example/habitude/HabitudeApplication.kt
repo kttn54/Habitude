@@ -3,13 +3,15 @@ package com.example.habitude
 import android.app.Application
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.work.*
 import com.example.habitude.background.UpdateDataWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.WorkManager
+import com.example.habitude.viewmodel.HabitViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
 
@@ -21,11 +23,15 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class HabitudeApplication: Application() {
-
     override fun onCreate() {
         super.onCreate()
 
-        val workRequest = PeriodicWorkRequestBuilder<UpdateDataWorker>(1, TimeUnit.MINUTES)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = PeriodicWorkRequestBuilder<UpdateDataWorker>(1, TimeUnit.DAYS)
+            .setConstraints(constraints)
             .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
             .build()
 
@@ -42,8 +48,8 @@ class HabitudeApplication: Application() {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = currentTimeMillis
 
-        calendar.set(Calendar.HOUR_OF_DAY, 18)
-        calendar.set(Calendar.MINUTE, 30)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 6)
         calendar.set(Calendar.SECOND, 0)
 
         // If the target time has already passed today, move it to the next day
@@ -55,7 +61,6 @@ class HabitudeApplication: Application() {
 
         val delayMillis = targetTimeMillis - currentTimeMillis
 
-        Log.e("test","delaymili is $delayMillis")
         return delayMillis
     }
 }
