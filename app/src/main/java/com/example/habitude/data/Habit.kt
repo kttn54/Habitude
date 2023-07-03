@@ -3,6 +3,11 @@ package com.example.habitude.data
 import android.os.Parcel
 import android.os.Parcelable
 
+/**
+ * This class contains the model for the Habit object.
+ * It is parcelable as habits will be sent through fragments for editing/deletion.
+ */
+
 data class Habit (
     val name: String = "",
     var habitId: String = "",

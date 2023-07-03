@@ -20,8 +20,12 @@ import com.example.habitude.utils.Constants.HABIT_DELETED
 import com.example.habitude.utils.Constants.HABIT_OBJECT
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.integrity.internal.c
 import dagger.hilt.android.AndroidEntryPoint
+import org.naishadhparmar.zcustomcalendar.CustomCalendar
+import java.util.*
+import java.util.Calendar.DAY_OF_MONTH
 
 @AndroidEntryPoint
 class EditHabitFragment : Fragment() {
@@ -30,6 +34,7 @@ class EditHabitFragment : Fragment() {
     private val viewModel by viewModels<HabitViewModel>()
     private var habit: Habit? = null
     private var updatedHabit: Habit? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,10 +53,10 @@ class EditHabitFragment : Fragment() {
 
         binding.etEditHabitName.setText(habit!!.name)
 
-        binding.calendarView.setOnDateChangeListener { _, year, month, day ->
-            val selectedDate = "$day-${month + 1}-$year"
-            Log.e("test","selectedDate is $selectedDate")
-            handleDateSelection(selectedDate)
+        val calendar: CustomCalendar = binding.calendarView
+        calendar.setOnDateSelectedListener { view, selectedDate, desc ->
+            val dayOfMonth = selectedDate.get(Calendar.DAY_OF_MONTH)
+            Snackbar.make(view, "$dayOfMonth selected", Snackbar.LENGTH_LONG).show()
         }
 
         binding.btnSaveHabit.setOnClickListener {
@@ -111,9 +116,9 @@ class EditHabitFragment : Fragment() {
         val isDateSelected = true
 
         if (isDateSelected) {
-            binding.calendarView.setDateBackgroundColor(Color.BLACK)
+            //binding.calendarView.setDateBackgroundColor(Color.BLACK)
         } else {
-            binding.calendarView.setBackgroundColor(Color.BLACK)
+            //binding.calendarView.setBackgroundColor(Color.BLACK)
         }
     }
 

@@ -1,24 +1,29 @@
 package com.example.habitude.adapters
 
-import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habitude.R
 import com.example.habitude.data.Habit
 import com.example.habitude.databinding.ItemHabitRowBinding
-import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * This class is the adapter for the Habit RecyclerView.
+ * It handles the binding of habit data to the item view and click events.
+ */
+
 class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
 
+    // dayClickListener is relevant for when the user clicks on a day in the habit
     private var dayClickListener: ((Habit) -> Unit)? = null
+
+    // onItemClick is relevant for when the user clicks on a habit
     lateinit var onItemClick: ((Habit) -> Unit)
 
+    // This function updates the data for the adapter in case the habit list size has changed.
     fun updateData(newHabitList: ArrayList<Habit>) {
         val previousSize = this.habits.size
         this.habits.clear()
@@ -34,6 +39,8 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         }
     }
 
+    // This class handles user click events for each day.
+    // If the day isn't coloured, then colour it. If it is already coloured, then revert it back to its original colour.
     inner class HabitViewHolder(val binding: ItemHabitRowBinding): RecyclerView.ViewHolder(binding.root) {
         init {
             binding.apply {
@@ -87,6 +94,7 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         return HabitViewHolder(ItemHabitRowBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
+    // This function calculates the text of the days dependent on the current day, then assigns it a background colour dependent on habit data.
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         val habit = habits[position]
         holder.binding.tvHabitName.text = habit.name

@@ -49,7 +49,7 @@ class HabitudeApplication: Application() {
         calendar.timeInMillis = currentTimeMillis
 
         calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 6)
+        calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
 
         // If the target time has already passed today, move it to the next day

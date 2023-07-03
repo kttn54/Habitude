@@ -24,6 +24,8 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
+// TODO: check reloading picture if same picture
+
 @AndroidEntryPoint
 class ProfileFragment: Fragment() {
     private lateinit var binding: FragmentProfileBinding

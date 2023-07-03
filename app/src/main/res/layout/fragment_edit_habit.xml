@@ -24,13 +24,14 @@
         android:hint="Habit Name"
         android:layout_weight="1"/>
 
-    <CalendarView
+    <org.naishadhparmar.zcustomcalendar.CustomCalendar
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:firstDayOfWeek="2"
+        app:day_of_week_start_from="monday"
+
         android:layout_weight="5"/>
 
     <LinearLayout
