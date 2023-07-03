@@ -1,6 +1,6 @@
 package com.example.habitude.fragments.habits
 
-import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,23 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.habitude.R
+import com.example.habitude.activities.HabitActivity
 import com.example.habitude.data.Habit
 import com.example.habitude.databinding.FragmentEditHabitBinding
 import com.example.habitude.utils.Constants.HABIT_DELETED
 import com.example.habitude.utils.Constants.HABIT_OBJECT
+import com.example.habitude.utils.CustomDateDecorator
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.integrity.internal.c
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import dagger.hilt.android.AndroidEntryPoint
-import org.naishadhparmar.zcustomcalendar.CustomCalendar
 import java.util.*
-import java.util.Calendar.DAY_OF_MONTH
 
 @AndroidEntryPoint
 class EditHabitFragment : Fragment() {
@@ -34,7 +38,7 @@ class EditHabitFragment : Fragment() {
     private val viewModel by viewModels<HabitViewModel>()
     private var habit: Habit? = null
     private var updatedHabit: Habit? = null
-
+    private var selectedDates = mutableListOf<CalendarDay>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,15 +57,24 @@ class EditHabitFragment : Fragment() {
 
         binding.etEditHabitName.setText(habit!!.name)
 
-        val calendar: CustomCalendar = binding.calendarView
-        calendar.setOnDateSelectedListener { view, selectedDate, desc ->
-            val dayOfMonth = selectedDate.get(Calendar.DAY_OF_MONTH)
-            Snackbar.make(view, "$dayOfMonth selected", Snackbar.LENGTH_LONG).show()
+        val calendar = binding.calendarView
+        val activity = activity as HabitActivity
+        selectedDates = habit!!.selectedDates
+
+        calendar.addDecorators(CustomDateDecorator(activity, selectedDates))
+
+        calendar.setOnDateChangedListener { _, date, selected ->
+            if (selected && !selectedDates.contains(date)) {
+                selectedDates.add(date)
+            } else {
+                selectedDates.remove(date)
+            }
+            calendar.invalidateDecorators() // Refresh the decorators
         }
 
         binding.btnSaveHabit.setOnClickListener {
             val editedName = binding.etEditHabitName.text.toString()
-            updatedHabit = habit!!.copy(name = editedName)
+            updatedHabit = habit!!.copy(name = editedName, selectedDates = selectedDates)
             viewModel.updateHabit(updatedHabit!!)
         }
 
@@ -106,19 +119,6 @@ class EditHabitFragment : Fragment() {
                     else -> Unit
                 }
             }
-        }
-    }
-
-    private fun handleDateSelection(selectedDate: String) {
-        val selectBackground = R.drawable.ic_habit_circle_completed
-        val unselectBackground = R.drawable.ic_habit_circle
-
-        val isDateSelected = true
-
-        if (isDateSelected) {
-            //binding.calendarView.setDateBackgroundColor(Color.BLACK)
-        } else {
-            //binding.calendarView.setBackgroundColor(Color.BLACK)
         }
     }
 

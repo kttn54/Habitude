@@ -2,6 +2,7 @@ package com.example.habitude.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.prolificinteractive.materialcalendarview.CalendarDay
 
 /**
  * This class contains the model for the Habit object.
@@ -18,7 +19,8 @@ data class Habit (
     var isDayFourComplete: Boolean = false,
     var isDayFiveComplete: Boolean = false,
     var isDaySixComplete: Boolean = false,
-    var isDaySevenComplete: Boolean = false
+    var isDaySevenComplete: Boolean = false,
+    var selectedDates: MutableList<CalendarDay> = mutableListOf()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -30,12 +32,16 @@ data class Habit (
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte()
+        parcel.readByte() != 0.toByte(),
+        mutableListOf<CalendarDay>().apply {
+            parcel.readTypedList(this, CalendarDay.CREATOR)
+        }
     ) {
     }
 
     constructor(): this("","", "",false, false, false,
-        false, false, false, false,)
+        false, false, false, false, mutableListOf()
+    )
 
     fun isDayCompleted(dayOfWeek: Int): Boolean {
         return when (dayOfWeek) {
@@ -61,6 +67,7 @@ data class Habit (
         parcel.writeByte(if (isDayFiveComplete) 1 else 0)
         parcel.writeByte(if (isDaySixComplete) 1 else 0)
         parcel.writeByte(if (isDaySevenComplete) 1 else 0)
+        parcel.writeTypedList(selectedDates)
     }
 
     override fun describeContents(): Int {

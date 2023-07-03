@@ -49,9 +49,10 @@ class AddHabitFragment : Fragment() {
             viewModel.addHabit(habit)
         }
 
+        // Programmatically perform the Add Habit button click action when "Enter" is pressed
         binding.etHabitName.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                binding.btnAddHabit.performClick() // Programmatically perform the sign-in button click action
+                binding.btnAddHabit.performClick()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false

@@ -97,12 +97,12 @@ dependencies {
     implementation 'androidx.hilt:hilt-work:1.0.0'
 
     // MaterialCalendarView
-    // implementation 'com.prolificinteractive:material-calendarview:1.4.3'
-
-    implementation 'org.naishadhparmar.zcustomcalendar:zcustomcalendar:1.0.1'
+    implementation 'com.prolificinteractive:material-calendarview:1.4.3'
 
     // Work Manager
     implementation "androidx.work:work-runtime-ktx:2.7.1"
+
+    implementation 'com.google.code.gson:gson:2.8.8'
 
     // Navigation Component
     def nav_version = "2.5.2"

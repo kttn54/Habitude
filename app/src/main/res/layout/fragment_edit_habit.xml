@@ -24,14 +24,14 @@
         android:hint="Habit Name"
         android:layout_weight="1"/>
 
-    <org.naishadhparmar.zcustomcalendar.CustomCalendar
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        app:day_of_week_start_from="monday"
-
+        app:mcv_firstDayOfWeek="monday"
+        app:mcv_showOtherDates="other_months"
+        app:mcv_selectionColor="@android:color/transparent"
         android:layout_weight="5"/>
 
     <LinearLayout
