@@ -24,6 +24,7 @@ import com.example.habitude.utils.CustomDateDecorator
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Timestamp
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
@@ -59,7 +60,8 @@ class EditHabitFragment : Fragment() {
 
         val calendar = binding.calendarView
         val activity = activity as HabitActivity
-        selectedDates = habit!!.selectedDates
+
+        selectedDates = habit!!.selectedDates.map { convertToCalendarDay(it) }.toMutableList()
 
         calendar.addDecorators(CustomDateDecorator(activity, selectedDates))
 
@@ -69,12 +71,23 @@ class EditHabitFragment : Fragment() {
             } else {
                 selectedDates.remove(date)
             }
+            Log.e("test","selecteddates is $selectedDates")
             calendar.invalidateDecorators() // Refresh the decorators
         }
 
         binding.btnSaveHabit.setOnClickListener {
             val editedName = binding.etEditHabitName.text.toString()
-            updatedHabit = habit!!.copy(name = editedName, selectedDates = selectedDates)
+            updatedHabit = habit!!.copy(
+                name = editedName,
+                isDayOneComplete = habit!!.isDayOneComplete,
+                isDayTwoComplete = habit!!.isDayTwoComplete,
+                isDayThreeComplete = habit!!.isDayThreeComplete,
+                isDayFourComplete = habit!!.isDayFourComplete,
+                isDayFiveComplete = habit!!.isDayFiveComplete,
+                isDaySixComplete = habit!!.isDaySixComplete,
+                isDaySevenComplete = habit!!.isDaySevenComplete,
+                selectedDates = selectedDates.map { convertToTimestamp(it) }.toMutableList()
+            )
             viewModel.updateHabit(updatedHabit!!)
         }
 
@@ -134,6 +147,19 @@ class EditHabitFragment : Fragment() {
         binding.toolbarEditHabitActivity.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
+    }
+
+    private fun convertToCalendarDay(timestamp: Timestamp): CalendarDay {
+        val date = timestamp.toDate()
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return CalendarDay.from(calendar)
+    }
+
+    private fun convertToTimestamp(calendarDay: CalendarDay): Timestamp {
+        val calendar = Calendar.getInstance()
+        calendar.set(calendarDay.year, calendarDay.month - 1, calendarDay.day)
+        return Timestamp(calendar.time)
     }
 
 }

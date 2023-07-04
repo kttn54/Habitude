@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.habitude.R
@@ -36,8 +37,6 @@ class HomeFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        habitAdapter = HabitAdapter(habitList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -75,6 +74,10 @@ class HomeFragment: Fragment() {
 
         setupActionBar()
 
+        habitAdapter = HabitAdapter(habitList, viewModel)
+
+        setupHabitRecyclerView()
+
         viewModel.getHabits()
 
         lifecycleScope.launchWhenStarted {
@@ -85,7 +88,6 @@ class HomeFragment: Fragment() {
                     is Resource.Success -> {
                         habitList = it.data!!
                         habitAdapter.updateData(habitList)
-                        setupHabitRecyclerView()
                     }
                     is Resource.Error -> {
                         Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
@@ -111,9 +113,11 @@ class HomeFragment: Fragment() {
             }
         }
 
-        habitAdapter.setOnDayClickListener { habit ->
-            viewModel.updateHabitDay(habit)
-        }
+        habitAdapter.setOnDayClickListener(object: HabitAdapter.DayClickListener {
+            override fun onDayClick(habit: Habit, day: Int) {
+                viewModel.updateHabitDay(habit)
+            }
+        })
 
         habitAdapter.onItemClick = { habit ->
             val bundle = Bundle().apply {

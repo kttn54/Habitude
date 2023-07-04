@@ -1,5 +1,6 @@
 package com.example.habitude.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -15,10 +16,10 @@ import kotlin.collections.ArrayList
  * It handles the binding of habit data to the item view and click events.
  */
 
-class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
+class HabitAdapter(private val habits: ArrayList<Habit>, private var dayClickListener: DayClickListener): RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
 
     // dayClickListener is relevant for when the user clicks on a day in the habit
-    private var dayClickListener: ((Habit) -> Unit)? = null
+    //private var dayClickListener: ((Habit) -> Unit)? = null
 
     // onItemClick is relevant for when the user clicks on a habit
     lateinit var onItemClick: ((Habit) -> Unit)
@@ -45,48 +46,56 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         init {
             binding.apply {
                 tvDayOne.setOnClickListener {
-                    val habit = habits[adapterPosition]
-                    habit.isDayOneComplete = !habit.isDayOneComplete
-                    onDayClick(habit)
-                    setDayBackground(tvDayOne, habit.isDayCompleted(1))
+                    updateDay(1, tvDayOne)
                 }
                 tvDayTwo.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayTwoComplete = !habit.isDayTwoComplete
-                    onDayClick(habit)
+                    dayClickListener.onDayClick(habit, 2)
                     setDayBackground(tvDayTwo, habit.isDayCompleted(2))
                 }
                 tvDayThree.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayThreeComplete = !habit.isDayThreeComplete
-                    onDayClick(habit)
+                    dayClickListener.onDayClick(habit, 3)
                     setDayBackground(tvDayThree, habit.isDayCompleted(3))
                 }
                 tvDayFour.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayFourComplete = !habit.isDayFourComplete
-                    onDayClick(habit)
+                    dayClickListener.onDayClick(habit, 4)
                     setDayBackground(tvDayFour, habit.isDayCompleted(4))
                 }
                 tvDayFive.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDayFiveComplete = !habit.isDayFiveComplete
-                    onDayClick(habit)
+                    dayClickListener.onDayClick(habit, 5)
                     setDayBackground(tvDayFive, habit.isDayCompleted(5))
                 }
                 tvDaySix.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDaySixComplete = !habit.isDaySixComplete
-                    onDayClick(habit)
+                    dayClickListener.onDayClick(habit, 6)
                     setDayBackground(tvDaySix, habit.isDayCompleted(6))
                 }
                 tvDaySeven.setOnClickListener {
                     val habit = habits[adapterPosition]
                     habit.isDaySevenComplete = !habit.isDaySevenComplete
-                    onDayClick(habit)
+                    dayClickListener.onDayClick(habit, 7)
                     setDayBackground(tvDaySeven, habit.isDayCompleted(7))
                 }
             }
+        }
+
+        private fun updateDay(day: Int, tvDay: TextView) {
+            val habit = habits[adapterPosition]
+            val isCompleted = habit.isDayCompleted(day)
+            //Log.e("test","habit is $habit and daycompleted is ${habit.isDayOneComplete}")
+            habit.setDayCompletion(day, !isCompleted)
+            //Log.e("test","habit is $habit and daycompleted is ${habit.isDayOneComplete}")
+            dayClickListener.onDayClick(habit, day)
+            setDayBackground(tvDay, habit.isDayCompleted(day))
+            notifyItemChanged(adapterPosition)
         }
     }
 
@@ -172,11 +181,18 @@ class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<H
         }
     }
 
-    fun setOnDayClickListener(listener: (Habit) -> Unit) {
+    fun setOnDayClickListener(listener: DayClickListener) {
         dayClickListener = listener
     }
 
-    private fun onDayClick(habit: Habit) {
+/*    private fun onDayClick(habit: Habit) {
         dayClickListener?.invoke(habit)
     }
+    */
+
+    interface DayClickListener {
+        fun onDayClick(habit: Habit, day: Int)
+    }
 }
+
+

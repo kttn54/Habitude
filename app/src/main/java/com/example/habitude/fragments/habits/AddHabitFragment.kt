@@ -27,10 +27,6 @@ class AddHabitFragment : Fragment() {
     private lateinit var binding: FragmentAddHabitBinding
     private val viewModel by viewModels<HabitViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,9 +39,10 @@ class AddHabitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
+
         binding.btnAddHabit.setOnClickListener {
             val habitName = binding.etHabitName.text.toString().trim()
-            val habit = Habit(habitName)
+            val habit = Habit(name = habitName)
             viewModel.addHabit(habit)
         }
 

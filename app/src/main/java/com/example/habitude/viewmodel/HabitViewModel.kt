@@ -3,10 +3,12 @@ package com.example.habitude.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.habitude.adapters.HabitAdapter
 import com.example.habitude.data.Habit
 import com.example.habitude.utils.Constants.HABIT_COLLECTION
 import com.example.habitude.utils.Resource
 import com.example.habitude.utils.Serializer
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -20,7 +22,7 @@ import javax.inject.Inject
 class HabitViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore
-): ViewModel() {
+): ViewModel(), HabitAdapter.DayClickListener {
 
     private val _addHabit = MutableStateFlow<Resource<Habit>>(Resource.Unspecified())
     val addHabit: Flow<Resource<Habit>> = _addHabit
@@ -78,23 +80,19 @@ class HabitViewModel @Inject constructor(
                 val habitList = mutableListOf<Habit>()
                 for (document in querySnapshot) {
                     val habitData = document.data
-                    Log.e("test","Type of selectedDates: ${habitData["selectedDates"]?.javaClass}")
 
                     @Suppress("UNCHECKED_CAST")
-                    val selectedDates = habitData["selectedDates"] as ArrayList<Map<String, Any>>
+                    val selectedDates = habitData["selectedDates"] as ArrayList<Timestamp>
 
-                    // Deserialize the JSON string back to MutableList<CalendarDay>
-                    val deserializedList = Serializer.deserializeList(selectedDates)
+                    // Convert timestamps to CalendarDay
+                    // val calendarDayList = selectedDates.map { CalendarDay.from(it.toDate().year, it.toDate().month, it.toDate().day) }
 
                     val habit = Habit(
                         name = habitData["name"] as String,
                         habitId = habitData["habitId"] as String,
                         userId = habitData["userId"] as String,
-                        selectedDates = deserializedList
+                        selectedDates = selectedDates
                     )
-
-                    //val habit = createHabitFromData(habitData)
-                    //val habit = document.toObject(Habit::class.java)
 
                     habit.habitId = document.id
                     habitList.add(habit)
@@ -114,22 +112,28 @@ class HabitViewModel @Inject constructor(
             transaction.set(documentRef, habit)
         }.addOnSuccessListener {
             viewModelScope.launch { _updateHabitDay.emit(Resource.Success(true)) }
+            Log.e("test","success")
         }.addOnFailureListener {
             viewModelScope.launch { _updateHabitDay.emit(Resource.Error("Update failed.")) }
+            Log.e("test","failed")
         }
     }
 
     fun updateHabit(habit: Habit) {
         viewModelScope.launch { _updateHabit.emit(Resource.Loading()) }
 
-        // Serialize the MutableList<CalendarDay> to List<Map<String, Any>>
-        val serializedList = Serializer.serializeList(habit.selectedDates)
-
         val habitData = hashMapOf(
             "name" to habit.name,
             "habitId" to habit.habitId,
             "userId" to habit.userId,
-            "selectedDates" to serializedList
+            "isDayOneComplete" to habit.isDayOneComplete,
+            "isDayTwoComplete" to habit.isDayTwoComplete,
+            "isDayThreeComplete" to habit.isDayThreeComplete,
+            "isDayFourComplete" to habit.isDayFourComplete,
+            "isDayFiveComplete" to habit.isDayFiveComplete,
+            "isDaySixComplete" to habit.isDaySixComplete,
+            "isDaySevenComplete" to habit.isDaySevenComplete,
+            "selectedDates" to habit.selectedDates
         )
 
         firestore.runTransaction { transaction ->
@@ -152,5 +156,10 @@ class HabitViewModel @Inject constructor(
             }.addOnFailureListener {
                 viewModelScope.launch { _deleteHabit.emit(Resource.Error(it.message.toString())) }
             }
+    }
+
+    override fun onDayClick(habit: Habit, day: Int) {
+        habit.setDayCompletion(day, !habit.isDayCompleted(day))
+        updateHabitDay(habit)
     }
 }

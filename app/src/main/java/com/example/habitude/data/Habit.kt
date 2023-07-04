@@ -2,7 +2,9 @@ package com.example.habitude.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.Timestamp
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import java.util.*
 
 /**
  * This class contains the model for the Habit object.
@@ -20,7 +22,7 @@ data class Habit (
     var isDayFiveComplete: Boolean = false,
     var isDaySixComplete: Boolean = false,
     var isDaySevenComplete: Boolean = false,
-    var selectedDates: MutableList<CalendarDay> = mutableListOf()
+    var selectedDates: MutableList<Timestamp> = mutableListOf()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -33,15 +35,24 @@ data class Habit (
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        mutableListOf<CalendarDay>().apply {
-            parcel.readTypedList(this, CalendarDay.CREATOR)
-        }
+        parcel.createTypedArrayList(Timestamp.CREATOR) ?: mutableListOf()
     ) {
     }
 
-    constructor(): this("","", "",false, false, false,
-        false, false, false, false, mutableListOf()
-    )
+    // Convert CalendarDay to Timestamp
+    fun convertToTimestamp(calendarDay: CalendarDay): Timestamp {
+        val calendar = Calendar.getInstance()
+        calendar.set(calendarDay.year, calendarDay.month - 1, calendarDay.day)
+        return Timestamp(calendar.time)
+    }
+
+    // Convert Timestamp to CalendarDay
+    fun convertToCalendarDay(timestamp: Timestamp): CalendarDay {
+        val date = timestamp.toDate()
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return CalendarDay.from(calendar)
+    }
 
     fun isDayCompleted(dayOfWeek: Int): Boolean {
         return when (dayOfWeek) {
@@ -53,6 +64,18 @@ data class Habit (
             6 -> isDaySixComplete
             7 -> isDaySevenComplete
             else -> false
+        }
+    }
+
+    fun setDayCompletion(day: Int, isCompleted: Boolean) {
+        when (day) {
+            1 -> isDayOneComplete = isCompleted
+            2 -> isDayTwoComplete = isCompleted
+            3 -> isDayThreeComplete = isCompleted
+            4 -> isDayFourComplete = isCompleted
+            5 -> isDayFiveComplete = isCompleted
+            6 -> isDaySixComplete = isCompleted
+            7 -> isDaySevenComplete = isCompleted
         }
     }
 
