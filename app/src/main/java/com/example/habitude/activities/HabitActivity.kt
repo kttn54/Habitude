@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * A class that displays the user's habits as the Home screen.
+ * It contains the HomeFragment which has the UI and functionality.
  */
 
 @AndroidEntryPoint
@@ -22,6 +23,7 @@ class HabitActivity : AppCompatActivity() {
         binding = ActivityHabitBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Setting up the bottom navigation view with the Navigation View
         val navController = findNavController(R.id.habitHostFragment)
         binding.bottomNavigation.setupWithNavController(navController)
     }

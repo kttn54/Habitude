@@ -1,8 +1,6 @@
 package com.example.habitude.fragments.habits
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,18 +11,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.habitude.R
-import com.example.habitude.activities.HabitActivity
 import com.example.habitude.adapters.HabitAdapter
 import com.example.habitude.data.Habit
 import com.example.habitude.databinding.FragmentHomeBinding
-import com.example.habitude.utils.Constants.EDITED_HABIT_OBJECT
 import com.example.habitude.utils.Constants.HABIT_DELETED
 import com.example.habitude.utils.Constants.HABIT_OBJECT
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class HomeFragment: Fragment() {

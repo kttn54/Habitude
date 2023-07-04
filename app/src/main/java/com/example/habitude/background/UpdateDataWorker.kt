@@ -23,13 +23,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+/**
+ * This class contains the WorkerManager class performs a background task to update habit data in the Firestore database.
+ * It updates the completion status of each habit for the previous days, and resets the current day.
+ */
+
 @HiltWorker
 class UpdateDataWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     ) : CoroutineWorker(context, params) {
-
-
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {

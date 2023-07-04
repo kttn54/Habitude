@@ -27,10 +27,6 @@ class AddHabitFragment : Fragment() {
     private lateinit var binding: FragmentAddHabitBinding
     private val viewModel by viewModels<HabitViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,7 +46,7 @@ class AddHabitFragment : Fragment() {
         }
 
         binding.etHabitName.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP)) {
                 binding.btnAddHabit.performClick() // Programmatically perform the sign-in button click action
                 return@setOnEditorActionListener true
             }

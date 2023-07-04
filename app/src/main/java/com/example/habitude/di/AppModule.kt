@@ -10,7 +10,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-// InstallIn specifies the life of the dependencies inside of the module
+/**
+ * This class is a Dagger module that provides dependencies related to Firebase services.
+ * @Module indicates that this is a class that contains methods for providing dependencies.
+ * @InstallIn(SingletonComponent:class) specifies that the dependencies provided should be installed in the 'SingletonComponent'.
+ * @Singleton indicates that only one instance of each dependency will be created and shared throughout the app.
+ *
+ * The app can easily inject these Firebase dependencies into the relevant classes through this class.
+ */
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -27,13 +34,4 @@ object AppModule {
     @Provides
     @Singleton
     fun provideStorage() = FirebaseStorage.getInstance().reference
-
-/*
-    @Provides
-    @Singleton
-    fun provideFirebaseCommon(
-        firebaseAuth: FirebaseAuth,
-        firestore: FirebaseFirestore
-    ) = FirebaseCommon(firestore, firebaseAuth)
-*/
 }

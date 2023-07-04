@@ -7,6 +7,10 @@ import com.example.habitude.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+/**
+ * This is a dialog that triggers when the user presses "Reset/change password"
+ */
+
 fun Fragment.setupBottomSheetDialog(
     onSendClick: (String) -> Unit
 ) {
