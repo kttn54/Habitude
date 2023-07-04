@@ -1,12 +1,15 @@
 package com.example.habitude.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitude.data.Habit
 import com.example.habitude.utils.Constants.HABIT_COLLECTION
 import com.example.habitude.utils.Resource
+import com.example.habitude.utils.Serializer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.prolificinteractive.materialcalendarview.CalendarDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,7 +77,25 @@ class HabitViewModel @Inject constructor(
             .addOnSuccessListener { querySnapshot ->
                 val habitList = mutableListOf<Habit>()
                 for (document in querySnapshot) {
-                    val habit = document.toObject(Habit::class.java)
+                    val habitData = document.data
+                    Log.e("test","Type of selectedDates: ${habitData["selectedDates"]?.javaClass}")
+
+                    @Suppress("UNCHECKED_CAST")
+                    val selectedDates = habitData["selectedDates"] as ArrayList<Map<String, Any>>
+
+                    // Deserialize the JSON string back to MutableList<CalendarDay>
+                    val deserializedList = Serializer.deserializeList(selectedDates)
+
+                    val habit = Habit(
+                        name = habitData["name"] as String,
+                        habitId = habitData["habitId"] as String,
+                        userId = habitData["userId"] as String,
+                        selectedDates = deserializedList
+                    )
+
+                    //val habit = createHabitFromData(habitData)
+                    //val habit = document.toObject(Habit::class.java)
+
                     habit.habitId = document.id
                     habitList.add(habit)
                 }
@@ -101,13 +122,23 @@ class HabitViewModel @Inject constructor(
     fun updateHabit(habit: Habit) {
         viewModelScope.launch { _updateHabit.emit(Resource.Loading()) }
 
+        // Serialize the MutableList<CalendarDay> to List<Map<String, Any>>
+        val serializedList = Serializer.serializeList(habit.selectedDates)
+
+        val habitData = hashMapOf(
+            "name" to habit.name,
+            "habitId" to habit.habitId,
+            "userId" to habit.userId,
+            "selectedDates" to serializedList
+        )
+
         firestore.runTransaction { transaction ->
             val documentRef = firestore.collection(HABIT_COLLECTION).document(habit.habitId)
-            transaction.set(documentRef, habit)
+            transaction.update(documentRef, habitData as Map<String, Any>)
         }.addOnSuccessListener {
             viewModelScope.launch { _updateHabit.emit(Resource.Success(habit)) }
         }.addOnFailureListener {
-            viewModelScope.launch { _updateHabit.emit(Resource.Error("Update failed.")) }
+            viewModelScope.launch { _updateHabit.emit(Resource.Error(it.message.toString())) }
         }
     }
 

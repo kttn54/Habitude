@@ -17,6 +17,7 @@ import kotlin.collections.ArrayList
 
 class HabitAdapter(private val habits: ArrayList<Habit>): RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
 
+    // dayClickListener is relevant for when the user clicks on a day in the habit
     private var dayClickListener: ((Habit) -> Unit)? = null
 
     // onItemClick is relevant for when the user clicks on a habit

@@ -1,21 +1,12 @@
 package com.example.habitude.background
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.hilt.work.HiltWorker
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.habitude.HabitudeApplication
 import com.example.habitude.data.Habit
 import com.example.habitude.utils.Constants.HABIT_COLLECTION
-import com.example.habitude.utils.Resource
-import com.example.habitude.viewmodel.HabitViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -37,7 +28,6 @@ class UpdateDataWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             try {
-                Log.e("test","doWork is executing")
                 val firestore = FirebaseFirestore.getInstance()
                 val habitsCollection = firestore.collection(HABIT_COLLECTION)
                 val habitsQuery = habitsCollection.get().await()
@@ -55,7 +45,6 @@ class UpdateDataWorker @AssistedInject constructor(
 
                     habitsCollection.document(habit.habitId).set(habit).await()
                 }
-
                 Result.success()
             } catch (e: Exception) {
                 Result.failure()
