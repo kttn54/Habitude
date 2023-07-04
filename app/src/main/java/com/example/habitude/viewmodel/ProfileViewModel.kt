@@ -31,6 +31,11 @@ import java.util.*
 import javax.inject.Inject
 import com.example.habitude.HabitudeApplication as HabitudeApplication
 
+/**
+ * This ProfileViewModel class is responsible for managing and coordinating the data related to the user profile.
+ * It provides functions to retrieve, update and logout the user.
+ */
+
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val firestore: FirebaseFirestore,

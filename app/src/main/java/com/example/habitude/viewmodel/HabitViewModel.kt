@@ -1,20 +1,25 @@
 package com.example.habitude.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitude.data.Habit
 import com.example.habitude.utils.Constants.HABIT_COLLECTION
 import com.example.habitude.utils.Resource
-import com.example.habitude.utils.Serializer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+/**
+ * This HabitViewModel class is responsible for managing and coordinating the data related to habits.
+ * It provides functions to retrieve, add, update and delete habit data using Firebase Firestore.
+ * It uses 'Flow' and 'MutableStateFlow' and is linked to various fragments to emit when a function is
+ * in a loading, success or error state.
+ * UI components can observe and react to changes in habit data through the exposed 'Flow' properties.
+ */
 
 @HiltViewModel
 class HabitViewModel @Inject constructor(
@@ -77,25 +82,7 @@ class HabitViewModel @Inject constructor(
             .addOnSuccessListener { querySnapshot ->
                 val habitList = mutableListOf<Habit>()
                 for (document in querySnapshot) {
-                    val habitData = document.data
-                    Log.e("test","Type of selectedDates: ${habitData["selectedDates"]?.javaClass}")
-
-                    @Suppress("UNCHECKED_CAST")
-                    val selectedDates = habitData["selectedDates"] as ArrayList<Map<String, Any>>
-
-                    // Deserialize the JSON string back to MutableList<CalendarDay>
-                    val deserializedList = Serializer.deserializeList(selectedDates)
-
-                    val habit = Habit(
-                        name = habitData["name"] as String,
-                        habitId = habitData["habitId"] as String,
-                        userId = habitData["userId"] as String,
-                        selectedDates = deserializedList
-                    )
-
-                    //val habit = createHabitFromData(habitData)
-                    //val habit = document.toObject(Habit::class.java)
-
+                    val habit = document.toObject(Habit::class.java)
                     habit.habitId = document.id
                     habitList.add(habit)
                 }
@@ -122,19 +109,9 @@ class HabitViewModel @Inject constructor(
     fun updateHabit(habit: Habit) {
         viewModelScope.launch { _updateHabit.emit(Resource.Loading()) }
 
-        // Serialize the MutableList<CalendarDay> to List<Map<String, Any>>
-        val serializedList = Serializer.serializeList(habit.selectedDates)
-
-        val habitData = hashMapOf(
-            "name" to habit.name,
-            "habitId" to habit.habitId,
-            "userId" to habit.userId,
-            "selectedDates" to serializedList
-        )
-
         firestore.runTransaction { transaction ->
             val documentRef = firestore.collection(HABIT_COLLECTION).document(habit.habitId)
-            transaction.update(documentRef, habitData as Map<String, Any>)
+            transaction.set(documentRef, habit)
         }.addOnSuccessListener {
             viewModelScope.launch { _updateHabit.emit(Resource.Success(habit)) }
         }.addOnFailureListener {

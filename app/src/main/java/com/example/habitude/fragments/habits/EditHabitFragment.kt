@@ -20,6 +20,11 @@ import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This fragment allows the user to edit or delete an existing habit.
+ * The updated habit is then saved and reflected in the user's habit list.
+ */
+
 @AndroidEntryPoint
 class EditHabitFragment : Fragment() {
 
@@ -41,6 +46,7 @@ class EditHabitFragment : Fragment() {
 
         setupActionBar()
 
+        // Get the Habit passed into this fragment from the Home fragment.
         habit = arguments?.getParcelable(HABIT_OBJECT)
 
         binding.etEditHabitName.setText(habit!!.name)
@@ -51,6 +57,7 @@ class EditHabitFragment : Fragment() {
             viewModel.updateHabit(updatedHabit!!)
         }
 
+        // When the habit is successfully saved, navigate back to the Home fragment.
         lifecycleScope.launchWhenStarted {
             viewModel.updateHabit.collect {
                 when (it) {
@@ -59,7 +66,6 @@ class EditHabitFragment : Fragment() {
                     }
                     is Resource.Success -> {
                         binding.btnSaveHabit.revertAnimation()
-
                         findNavController().navigate(R.id.action_editHabitFragment_to_homeFragment)
                     }
                     is Resource.Error -> {
@@ -74,6 +80,8 @@ class EditHabitFragment : Fragment() {
             viewModel.deleteHabit(habit!!)
         }
 
+        // When the habit is successfully deleted, navigate back to the Home fragment and set the deleted habit
+        // to the "HABIT_DELETED" key, allowing it to be retrieved if needed.
         lifecycleScope.launchWhenStarted {
             viewModel.deleteHabit.collect {
                 when (it) {
@@ -82,7 +90,6 @@ class EditHabitFragment : Fragment() {
                     }
                     is Resource.Success -> {
                         binding.btnDeleteHabit.revertAnimation()
-
                         findNavController().previousBackStackEntry?.savedStateHandle?.set(HABIT_DELETED, habit)
                         findNavController().popBackStack()
                     }

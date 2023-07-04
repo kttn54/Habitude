@@ -21,6 +21,13 @@ import com.example.habitude.viewmodel.HabitViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This fragment displays a list of habits. It retrieves the habits from the ViewModel and
+ * populates them in a RecyclerView using the HabitAdapter. It handles navigation to the
+ * AddHabitFragment for adding new habits and to the EditHabitFragment for editing existing habits.
+ * Users can also edit a habit by clicking on it.
+ */
+
 @AndroidEntryPoint
 class HomeFragment: Fragment() {
 
@@ -37,11 +44,11 @@ class HomeFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
-
         binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
     }
 
+    // Function to display the "add" icon in the toolbar.
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -56,6 +63,7 @@ class HomeFragment: Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    // Function to retrieve the deleted habit (if any) when the fragment is resumed.
     override fun onResume() {
         super.onResume()
 
@@ -69,9 +77,11 @@ class HomeFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
+        setupHabitRecyclerView()
 
         viewModel.getHabits()
 
+        //
         lifecycleScope.launchWhenStarted {
             viewModel.habits.collect {
                 when (it) {
@@ -80,7 +90,6 @@ class HomeFragment: Fragment() {
                     is Resource.Success -> {
                         habitList = it.data!!
                         habitAdapter.updateData(habitList)
-                        setupHabitRecyclerView()
                     }
                     is Resource.Error -> {
                         Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
@@ -110,7 +119,7 @@ class HomeFragment: Fragment() {
             viewModel.updateHabitDay(habit)
         }
 
-        habitAdapter.onItemClick = { habit ->
+        habitAdapter.onHabitItemClick = { habit ->
             val bundle = Bundle().apply {
                 putParcelable(HABIT_OBJECT, habit)
             }

@@ -5,14 +5,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.habitude.utils.Resource
+import com.example.habitude.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+
+/**
+ * This LoginViewModel class is responsible for managing and coordinating the data related to user logins.
+ * It provides functions to login and reset password.
+ */
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -24,6 +32,9 @@ class LoginViewModel @Inject constructor(
     private val _login = MutableSharedFlow<Resource<FirebaseUser>>()
     val login = _login.asSharedFlow()
 
+    private val _validation = Channel<RegisterFieldsState>()
+    val loginValidation = _validation.receiveAsFlow()
+
     private val _resetPassword = MutableSharedFlow<Resource<String>>()
     val resetPassword = _resetPassword.asSharedFlow()
 
@@ -32,22 +43,33 @@ class LoginViewModel @Inject constructor(
     val snackbarEvent: LiveData<SnackbarEvent> = _snackbarEvent
 
     fun login(email: String, password: String) {
-        viewModelScope.launch { _login.emit(Resource.Loading()) }
+        if (checkValidation(email, password)) {
+            runBlocking {
+                _login.emit(Resource.Loading())
+            }
 
-        if (validateForm(email, password)) {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, password
-            ).addOnSuccessListener {
-                viewModelScope.launch {
-                    it.user?.let {
-                        _login.emit(Resource.Success(it))
+            if (validateForm(email, password)) {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email, password
+                ).addOnSuccessListener {
+                    viewModelScope.launch {
+                        it.user?.let {
+                            _login.emit(Resource.Success(it))
+                        }
+                    }
+
+                }.addOnFailureListener {
+                    viewModelScope.launch {
+                        _login.emit(Resource.Error(it.message.toString()))
                     }
                 }
-
-            }.addOnFailureListener {
-                viewModelScope.launch {
-                    _login.emit(Resource.Error(it.message.toString()))
-                }
+            }
+        } else {
+            val registerFieldsState = RegisterFieldsState(
+                validateEmail(email), validatePassword(password)
+            )
+            runBlocking {
+                _validation.send(registerFieldsState)
             }
         }
     }
@@ -87,5 +109,14 @@ class LoginViewModel @Inject constructor(
             currentUserId = currentUser.uid
         }
         return currentUserId
+    }
+
+    private fun checkValidation(email: String, password: String): Boolean {
+        val emailValidation = validateEmail(email)
+        val passwordValidation = validatePassword(password)
+        val shouldRegister = emailValidation is RegisterValidation.Success &&
+                passwordValidation is RegisterValidation.Success
+
+        return shouldRegister
     }
 }

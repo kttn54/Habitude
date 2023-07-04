@@ -2,6 +2,11 @@ package com.example.habitude.utils
 
 import android.util.Patterns
 
+/**
+ *  These two functions check the validity of the email and password fields of the Login and Register fragments
+ *  and return the appropriate string if not valid.
+ */
+
 fun validateEmail(email: String): RegisterValidation {
     if (email.isEmpty())
         return RegisterValidation.Failed("Email cannot be empty")

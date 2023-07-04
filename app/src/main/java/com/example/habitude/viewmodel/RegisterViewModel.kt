@@ -1,13 +1,10 @@
 package com.example.habitude.viewmodel
 
-
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.example.habitude.data.User
 import com.example.habitude.utils.*
 import com.example.habitude.utils.Constants.USER_COLLECTION
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +13,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+
+/**
+ * This RegisterViewModel class is responsible for managing and coordinating the data related to the registration of a user.
+ * It provides a function to create an account using Firebase Authentication and Firebase Firestore.
+ */
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -28,7 +30,7 @@ class RegisterViewModel @Inject constructor(
 
     // Difference between Channel and MutableStateFlow is that Channel does not take any initial value
     private val _validation = Channel<RegisterFieldsState>()
-    val validation = _validation.receiveAsFlow()
+    val registerValidation = _validation.receiveAsFlow()
 
     /**
      * A function to register the user into the Firestore database.

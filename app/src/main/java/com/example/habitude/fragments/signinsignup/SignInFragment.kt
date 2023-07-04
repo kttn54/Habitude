@@ -19,10 +19,17 @@ import com.example.habitude.R
 import com.example.habitude.activities.HabitActivity
 import com.example.habitude.databinding.FragmentSignInBinding
 import com.example.habitude.dialog.setupBottomSheetDialog
+import com.example.habitude.utils.RegisterValidation
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+/**
+ * This fragment represents the sign-in screen of the app, where users can authenticate and access their account.
+ */
 
 @AndroidEntryPoint
 class SignInFragment : Fragment(R.layout.fragment_sign_in) {
@@ -33,7 +40,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSignInBinding.inflate(inflater)
         return binding.root
     }
@@ -42,6 +49,8 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.etEmailSignIn.requestFocus()
+
+        // This will click the sign in button when the "enter" button is pressed
         binding.etPasswordSignIn.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KEYCODE_ENTER)) {
                 binding.btnSignIn.performClick() // Programmatically perform the sign-in button click action
@@ -50,6 +59,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
             return@setOnEditorActionListener false
         }
 
+        // A Snackbar will show if there is a change in value in the snackbar variable in the LoginViewModel.
         viewModel.snackbarEvent.observe(viewLifecycleOwner) { snackbarEvent ->
             snackbarEvent?.let {
                 Snackbar.make(requireView(), snackbarEvent.message, Snackbar.LENGTH_LONG).show()
@@ -65,6 +75,31 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
             }
         }
 
+        // This will show an error if the email or password fields are empty and/or incorrect.
+        lifecycleScope.launchWhenStarted {
+            viewModel.loginValidation.collect { validation ->
+                if (validation.email is RegisterValidation.Failed) {
+                    withContext(Dispatchers.Main) {
+                        binding.etEmailSignIn.apply {
+                            requestFocus()
+                            error = validation.email.message
+                        }
+                    }
+                }
+
+                if (validation.password is RegisterValidation.Failed) {
+                    withContext(Dispatchers.Main) {
+                        binding.etPasswordSignIn.apply {
+                            requestFocus()
+                            error = validation.password.message
+                        }
+                    }
+                }
+            }
+        }
+
+        // When the user logins successfully, the intent clears all activities on top of the
+        // Main activity stack and brings an existing instance of 'MainActivity' to the front if it exists
         lifecycleScope.launchWhenStarted {
             viewModel.login.collect {
                 when (it) {
@@ -74,10 +109,6 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                     is Resource.Success -> {
                         binding.btnSignIn.revertAnimation()
                         Intent(requireActivity(), HabitActivity::class.java).also { intent ->
-                            // ACTIVITY_CLEAR_TASK clears all the activities on top of the Main activity stack and
-                            // ACTIVITY_CLEAR_TOP ensures that if an instance of MainActivity already exists in the current stack,
-                            // it will be brought to the front instead of creating a new instance.
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
                         }
                     }
@@ -111,7 +142,5 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                 }
             }
         }
-
-        //TODO: do validation error fields for username and password
     }
 }

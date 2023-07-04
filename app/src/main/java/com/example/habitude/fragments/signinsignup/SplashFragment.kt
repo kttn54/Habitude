@@ -17,6 +17,11 @@ import com.example.habitude.viewmodel.HabitViewModel
 import com.example.habitude.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This fragment is shown when the app is launched and provides a brief visual indication to
+ * the user that the app is loading.
+ */
+
 @AndroidEntryPoint
 class SplashFragment: Fragment(R.layout.fragment_splash) {
 
@@ -43,7 +48,7 @@ class SplashFragment: Fragment(R.layout.fragment_splash) {
      * depending if the user is already logged in or not.
      **/
     private fun moveToNextActivity() {
-        val delayMillis = 500L
+        val delayMillis = 1500L
 
         /*
         Handler(Looper.getMainLooper()) ensures the postDelayed method will run on the main thread,

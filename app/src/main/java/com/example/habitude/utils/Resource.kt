@@ -1,12 +1,10 @@
 package com.example.habitude.utils
 
 /**
- *  The 'sealed' modifier restricts the inheritance of a class - it can only be subclassed within the same file where it is declared.
- *  Purpose of using a 'sealed' class is to provide a limited set of possibilities for the subclasses of 'Resource'.
- *  Since the sealed class guarantees that all possible subclasses are defined within the same file, the compiler can perform exhaustive checks in a possible 'when' clause.
+ * This class outputs the result of an operation/request with several states.
+ * Resource<T> is used to capture the different states of an operation where it can receive any data type.
  */
 
-// Generic class: <T> can receive any data type
 sealed class Resource<T> (
     val data: T? = null,
     val message: String? = null

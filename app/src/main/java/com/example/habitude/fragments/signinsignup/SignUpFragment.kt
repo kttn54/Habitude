@@ -39,24 +39,6 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
 
         setupActionBar()
         binding.btnSignUp.setOnClickListener { registerUser() }
-    }
-
-    /**
-     * A function for actionBar Setup.
-     */
-    private fun setupActionBar() {
-
-        val appCompatActivity = requireActivity() as AppCompatActivity
-
-        appCompatActivity.setSupportActionBar(binding.toolbarSignUpFragment)
-
-        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
-        }
-
-        binding.toolbarSignUpFragment.setNavigationOnClickListener { findNavController().popBackStack() }
 
         lifecycleScope.launchWhenStarted {
             viewModel.register.collect {
@@ -78,7 +60,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         }
 
         lifecycleScope.launchWhenStarted {
-            viewModel.validation.collect { validation ->
+            viewModel.registerValidation.collect { validation ->
                 if (validation.email is RegisterValidation.Failed) {
                     withContext(Dispatchers.Main) {
                         binding.etEmail.apply {
@@ -100,9 +82,21 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         }
     }
 
-    /**
-     * A function to register the user into the Firestore database.
-     */
+    private fun setupActionBar() {
+
+        val appCompatActivity = requireActivity() as AppCompatActivity
+
+        appCompatActivity.setSupportActionBar(binding.toolbarSignUpFragment)
+
+        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
+        }
+
+        binding.toolbarSignUpFragment.setNavigationOnClickListener { findNavController().popBackStack() }
+    }
+
     private fun registerUser() {
         // Here we get the text from editText and trim the space
         binding.apply {
@@ -116,8 +110,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
     }
 
     /**
-     * A function to be called the user is registered successfully and
-     * an entry is made in the Firestore database.
+     * A function to be called the user is registered successfully and an entry is made in the Firestore database.
      */
     private fun userRegisteredSuccess() {
         Toast.makeText(
@@ -125,16 +118,5 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
             "You have successfully registered.",
             Toast.LENGTH_SHORT
         ).show()
-
-        // Hide the progress dialog
-        // hideProgressDialog()
-
-        /*
-        Here the new user registered is automatically signed-in so we just sign-out the user from firebase
-        and send him to Intro Screen for Sign-In
-        */
-        FirebaseAuth.getInstance().signOut()
-        // Finish the Sign-Up Screen
-        // finish()
     }
 }

@@ -11,6 +11,10 @@ import com.example.habitude.R
 import com.example.habitude.databinding.FragmentIntroBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This fragment represents the introduction screen of the app, where users can navigate to sign in or sign up.
+ */
+
 @AndroidEntryPoint
 class IntroFragment: Fragment(R.layout.fragment_intro) {
     private lateinit var binding: FragmentIntroBinding

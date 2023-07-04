@@ -24,6 +24,11 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
+/**
+ * This fragment displays the user's profile information and
+ * provides functionality to edit the profile, update the password, and log out.
+ */
+
 // TODO: check reloading picture if same picture
 
 @AndroidEntryPoint

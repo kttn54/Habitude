@@ -9,11 +9,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
  * It is parcelable as habits will be sent through fragments for editing/deletion.
  */
 
-/**
- * This class contains the model for the Habit object.
- * It is parcelable as habits will be sent through fragments for editing/deletion.
- */
-
 data class Habit (
     val name: String = "",
     var habitId: String = "",
@@ -25,7 +20,6 @@ data class Habit (
     var isDayFiveComplete: Boolean = false,
     var isDaySixComplete: Boolean = false,
     var isDaySevenComplete: Boolean = false,
-    var selectedDates: MutableList<CalendarDay> = mutableListOf()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -37,15 +31,7 @@ data class Habit (
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte(),
-        mutableListOf<CalendarDay>().apply {
-            parcel.readTypedList(this, CalendarDay.CREATOR)
-        }
-    ) {
-    }
-
-    constructor(): this("","", "",false, false, false,
-        false, false, false, false, mutableListOf()
+        parcel.readByte() != 0.toByte()
     )
 
     fun isDayCompleted(dayOfWeek: Int): Boolean {
@@ -57,7 +43,20 @@ data class Habit (
             5 -> isDayFiveComplete
             6 -> isDaySixComplete
             7 -> isDaySevenComplete
-            else -> false
+            else -> throw IllegalArgumentException("Invalid day index: $dayOfWeek")
+        }
+    }
+
+    fun setDayCompletion(dayIndex: Int, isCompleted: Boolean) {
+        when (dayIndex) {
+            1 -> isDayOneComplete = isCompleted
+            2 -> isDayTwoComplete = isCompleted
+            3 -> isDayThreeComplete = isCompleted
+            4 -> isDayFourComplete = isCompleted
+            5 -> isDayFiveComplete = isCompleted
+            6 -> isDaySixComplete = isCompleted
+            7 -> isDaySevenComplete = isCompleted
+            else -> throw IllegalArgumentException("Invalid day index: $dayIndex")
         }
     }
 
@@ -72,7 +71,6 @@ data class Habit (
         parcel.writeByte(if (isDayFiveComplete) 1 else 0)
         parcel.writeByte(if (isDaySixComplete) 1 else 0)
         parcel.writeByte(if (isDaySevenComplete) 1 else 0)
-        parcel.writeTypedList(selectedDates)
     }
 
     override fun describeContents(): Int {

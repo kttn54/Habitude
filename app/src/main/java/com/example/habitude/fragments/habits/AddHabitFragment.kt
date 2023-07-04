@@ -21,6 +21,10 @@ import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.HabitViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This fragment allows the user to add a new habit. The habit is then added to the user's habit list.
+ */
+
 @AndroidEntryPoint
 class AddHabitFragment : Fragment() {
 
@@ -30,7 +34,7 @@ class AddHabitFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAddHabitBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -39,12 +43,14 @@ class AddHabitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
+
         binding.btnAddHabit.setOnClickListener {
             val habitName = binding.etHabitName.text.toString().trim()
             val habit = Habit(habitName)
             viewModel.addHabit(habit)
         }
 
+        // The habit will be saved when the "enter" button is pressed
         binding.etHabitName.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP)) {
                 binding.btnAddHabit.performClick() // Programmatically perform the sign-in button click action

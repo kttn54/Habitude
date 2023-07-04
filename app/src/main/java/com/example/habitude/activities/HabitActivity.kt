@@ -27,5 +27,4 @@ class HabitActivity : AppCompatActivity() {
         val navController = findNavController(R.id.habitHostFragment)
         binding.bottomNavigation.setupWithNavController(navController)
     }
-
 }
