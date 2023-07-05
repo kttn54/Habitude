@@ -8,7 +8,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 /**
- * This is a dialog that triggers when the user presses "Reset/change password"
+ * Creates and displays a BottomSheetDialog for resetting/changing the password.
+ * The dialog contains an EditText for email input and two buttons for 'send' and 'cancel'.
+ * The 'send' button's click behavior is defined by the passed lambda function 'onSendClick'.
+ * The 'cancel' button dismisses the dialog.
  */
 
 fun Fragment.setupBottomSheetDialog(
@@ -24,13 +27,17 @@ fun Fragment.setupBottomSheetDialog(
     val btnSend = view.findViewById<Button>(R.id.btn_send)
     val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
 
-    btnSend.setOnClickListener {
-        val email = etEmail.text.toString().trim()
-        onSendClick(email)
-        dialog.dismiss()
+    btnSend?.setOnClickListener {
+        val email = etEmail?.text?.toString()?.trim()
+        if (!email.isNullOrEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            onSendClick(email)
+            dialog.dismiss()
+        } else {
+            etEmail?.error = "Enter a valid email"
+        }
     }
 
-    btnCancel.setOnClickListener {
+    btnCancel?.setOnClickListener {
         dialog.dismiss()
     }
 }

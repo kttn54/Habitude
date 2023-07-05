@@ -47,6 +47,7 @@ class UpdateDataWorker @AssistedInject constructor(
                 }
                 Result.success()
             } catch (e: Exception) {
+                Log.e("UpdateDataWorker", "Failed to update data", e)
                 Result.failure()
             }
         }

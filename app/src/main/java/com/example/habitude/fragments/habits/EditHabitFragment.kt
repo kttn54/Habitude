@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -49,15 +50,26 @@ class EditHabitFragment : Fragment() {
         // Get the Habit passed into this fragment from the Home fragment.
         habit = arguments?.getParcelable(HABIT_OBJECT)
 
-        binding.etEditHabitName.setText(habit!!.name)
-
-        binding.btnSaveHabit.setOnClickListener {
-            val editedName = binding.etEditHabitName.text.toString()
-            updatedHabit = habit!!.copy(name = editedName)
-            viewModel.updateHabit(updatedHabit!!)
+        habit?.let {
+            binding.etEditHabitName.setText(it.name)
         }
 
-        // When the habit is successfully saved, navigate back to the Home fragment.
+        binding.btnSaveHabit.setOnClickListener {
+            handleSaveHabit()
+        }
+
+        observeUpdateHabit()
+
+        binding.btnDeleteHabit.setOnClickListener {
+            habit?.let { habit -> viewModel.deleteHabit(habit) }
+        }
+
+        observeDeleteHabit()
+    }
+
+    // When the habit is successfully deleted, navigate back to the Home fragment and set the deleted habit
+    // to the "HABIT_DELETED" key, allowing it to be retrieved if needed.
+    private fun observeUpdateHabit() {
         lifecycleScope.launchWhenStarted {
             viewModel.updateHabit.collect {
                 when (it) {
@@ -69,19 +81,15 @@ class EditHabitFragment : Fragment() {
                         findNavController().navigate(R.id.action_editHabitFragment_to_homeFragment)
                     }
                     is Resource.Error -> {
-                        Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
+                        handleError(it.message ?: "Unknown Error")
                     }
                     else -> Unit
                 }
             }
         }
+    }
 
-        binding.btnDeleteHabit.setOnClickListener {
-            viewModel.deleteHabit(habit!!)
-        }
-
-        // When the habit is successfully deleted, navigate back to the Home fragment and set the deleted habit
-        // to the "HABIT_DELETED" key, allowing it to be retrieved if needed.
+    private fun observeDeleteHabit() {
         lifecycleScope.launchWhenStarted {
             viewModel.deleteHabit.collect {
                 when (it) {
@@ -94,11 +102,21 @@ class EditHabitFragment : Fragment() {
                         findNavController().popBackStack()
                     }
                     is Resource.Error -> {
-                        Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
+                        handleError(it.message ?: "Unknown Error")
                     }
                     else -> Unit
                 }
             }
+        }
+    }
+
+    private fun handleSaveHabit() {
+        val editedName = binding.etEditHabitName.text.toString().trim()
+        if (editedName.isNotBlank()) {
+            updatedHabit = habit?.copy(name = editedName)
+            updatedHabit?.let { viewModel.updateHabit(it) }
+        } else {
+            handleError("Habit name cannot be empty")
         }
     }
 
@@ -116,4 +134,7 @@ class EditHabitFragment : Fragment() {
         }
     }
 
+    private fun handleError(message: String) {
+        Toast.makeText(requireActivity(), "Error: $message", Toast.LENGTH_LONG).show()
+    }
 }

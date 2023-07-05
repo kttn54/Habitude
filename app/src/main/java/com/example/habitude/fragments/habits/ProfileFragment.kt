@@ -67,32 +67,10 @@ class ProfileFragment: Fragment() {
 
         viewModel.getUser()
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.user.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.progressbarProfile.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        showUserInformation(it.data!!)
-                        binding.progressbarProfile.visibility = View.GONE
-                    }
-                    is Resource.Error -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                        binding.progressbarProfile.visibility = View.GONE
-                    }
-                    else -> Unit
-                }
-            }
-        }
+        observeGetUser()
 
         binding.btnEditProfile.setOnClickListener {
-            binding.btnSaveProfile.visibility = View.VISIBLE
-            binding.btnEditProfile.visibility = View.GONE
-            binding.tvName.visibility = View.GONE
-            binding.etName.visibility = View.VISIBLE
-            binding.civEdit.visibility = View.VISIBLE
-            binding.etName.setText("${binding.tvName.text}")
+            setUIComponents()
         }
 
         binding.civEdit.setOnClickListener {
@@ -102,17 +80,55 @@ class ProfileFragment: Fragment() {
         }
 
         binding.btnSaveProfile.setOnClickListener {
-            binding.tvName.visibility = View.VISIBLE
-            binding.etName.visibility = View.INVISIBLE
-            binding.civEdit.visibility = View.GONE
-
-            val name = binding.etName.text.toString().trim()
-            val email = binding.etEmail.text.toString().trim()
-            updatedUser = User(name, email)
-            viewModel.updateUser(updatedUser!!, imageUri)
-            showUserInformation(updatedUser!!)
+            saveUserProfile()
         }
 
+        observeUpdateUser()
+
+        binding.tvUpdatePassword.setOnClickListener {
+            setupBottomSheetDialog { email ->
+                viewModel.resetPassword(email)
+            }
+        }
+
+        observeResetPassword()
+
+        binding.llLogOut.setOnClickListener {
+            viewModel.logout()
+            val intent = Intent(requireActivity(), IntroductionActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+    }
+
+    private fun saveUserProfile() {
+        binding.tvName.visibility = View.VISIBLE
+        binding.etName.visibility = View.INVISIBLE
+        binding.civEdit.visibility = View.GONE
+
+        val name = binding.etName.text.toString().trim()
+        val email = binding.etEmail.text.toString().trim()
+
+        if (name.isEmpty() || email.isEmpty()) {
+            Toast.makeText(requireContext(), "Name and Email cannot be empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        updatedUser = User(name, email)
+        viewModel.updateUser(updatedUser ?: return, imageUri)
+        showUserInformation(updatedUser!!)
+    }
+
+    private fun setUIComponents() {
+        binding.btnSaveProfile.visibility = View.VISIBLE
+        binding.btnEditProfile.visibility = View.GONE
+        binding.tvName.visibility = View.GONE
+        binding.etName.visibility = View.VISIBLE
+        binding.civEdit.visibility = View.VISIBLE
+        binding.etName.setText("${binding.tvName.text}")
+    }
+
+    private fun observeUpdateUser() {
         lifecycleScope.launchWhenStarted {
             viewModel.updateInfo.collectLatest {
                 when (it) {
@@ -124,22 +140,41 @@ class ProfileFragment: Fragment() {
                         binding.btnSaveProfile.visibility = View.GONE
                         binding.btnEditProfile.visibility = View.VISIBLE
 
-                        showUserInformation(it.data!!)
+                        val user = it.data ?: return@collectLatest
+                        showUserInformation(user)
                     }
                     is Resource.Error -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        handleError(it.message ?: "Unknown Error")
                     }
                     else -> Unit
                 }
             }
         }
+    }
 
-        binding.tvUpdatePassword.setOnClickListener {
-            setupBottomSheetDialog { email ->
-                viewModel.resetPassword(email)
+    private fun observeGetUser() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.user.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+                        binding.progressbarProfile.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        val user = it.data ?: return@collectLatest
+                        showUserInformation(user)
+                        binding.progressbarProfile.visibility = View.GONE
+                    }
+                    is Resource.Error -> {
+                        handleError(it.message ?: "Unknown Error")
+                        binding.progressbarProfile.visibility = View.GONE
+                    }
+                    else -> Unit
+                }
             }
         }
+    }
 
+    private fun observeResetPassword() {
         lifecycleScope.launchWhenStarted {
             viewModel.resetPassword.collect {
                 when (it) {
@@ -155,24 +190,21 @@ class ProfileFragment: Fragment() {
                 }
             }
         }
-
-        binding.llLogOut.setOnClickListener {
-            viewModel.logout()
-            val intent = Intent(requireActivity(), IntroductionActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish()
-        }
     }
 
     private fun showUserInformation(user: User) {
         binding.apply {
             Glide.with(this@ProfileFragment)
                 .load(user.image)
-                .error(R.drawable.no_image_small)
+                .placeholder(R.drawable.no_image_small)
                 .into(binding.civUser)
 
             tvName.text = user.name
             etEmail.setText(user.email)
         }
+    }
+
+    private fun handleError(message: String) {
+        Toast.makeText(requireActivity(), "Error: $message", Toast.LENGTH_LONG).show()
     }
 }

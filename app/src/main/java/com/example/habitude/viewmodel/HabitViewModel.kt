@@ -45,7 +45,15 @@ class HabitViewModel @Inject constructor(
     fun addHabit(habit: Habit) {
         viewModelScope.launch { _addHabit.emit(Resource.Loading()) }
 
-        val userId = firebaseAuth.currentUser?.uid
+        val userId = firebaseAuth.currentUser?.uid ?: run {
+            viewModelScope.launch { _addHabit.emit(Resource.Error("User not authenticated")) }
+            return
+        }
+
+        if (habit.name.isNullOrEmpty()) {
+            viewModelScope.launch { _addHabit.emit(Resource.Error("Invalid habit")) }
+            return
+        }
 
         val query = firestore.collection(HABIT_COLLECTION)
             .whereEqualTo("userId", userId)
@@ -90,20 +98,6 @@ class HabitViewModel @Inject constructor(
             }.addOnFailureListener {
                 viewModelScope.launch { _habits.emit(Resource.Error(it.message.toString())) }
             }
-    }
-
-    // Update the habit data in Firebase
-    fun updateHabitDay(habit: Habit) {
-        viewModelScope.launch { _updateHabitDay.emit(Resource.Loading()) }
-
-        firestore.runTransaction { transaction ->
-            val documentRef = firestore.collection(HABIT_COLLECTION).document(habit.habitId)
-            transaction.set(documentRef, habit)
-        }.addOnSuccessListener {
-            viewModelScope.launch { _updateHabitDay.emit(Resource.Success(true)) }
-        }.addOnFailureListener {
-            viewModelScope.launch { _updateHabitDay.emit(Resource.Error("Update failed.")) }
-        }
     }
 
     fun updateHabit(habit: Habit) {

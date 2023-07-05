@@ -26,20 +26,24 @@ class HabitudeApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+        try {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
-        val workRequest = PeriodicWorkRequestBuilder<UpdateDataWorker>(1, TimeUnit.DAYS)
-            .setConstraints(constraints)
-            .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
-            .build()
+            val workRequest = PeriodicWorkRequestBuilder<UpdateDataWorker>(1, TimeUnit.DAYS)
+                .setConstraints(constraints)
+                .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
+                .build()
 
-        WorkManager.getInstance(applicationContext)
-            .enqueueUniquePeriodicWork(
-                "UpdateDataWorker",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                workRequest)
+            WorkManager.getInstance(applicationContext)
+                .enqueueUniquePeriodicWork(
+                    "UpdateDataWorker",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    workRequest)
+        } catch (e: Exception) {
+            Log.e("WorkManager", "Error scheduling the work")
+        }
     }
 
     private fun calculateInitialDelay(): Long {

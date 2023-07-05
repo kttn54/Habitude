@@ -17,12 +17,8 @@ import com.example.habitude.databinding.FragmentSignUpBinding
 import com.example.habitude.utils.RegisterValidation
 import com.example.habitude.utils.Resource
 import com.example.habitude.viewmodel.RegisterViewModel
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
-private val TAG = "SignUpFragment"
 
 @AndroidEntryPoint
 class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
@@ -38,8 +34,35 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
+
         binding.btnSignUp.setOnClickListener { registerUser() }
 
+        observeUserRegister()
+        observeRegisterValidation()
+
+    }
+
+    private fun observeRegisterValidation() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.registerValidation.collect { validation ->
+                if (validation.email is RegisterValidation.Failed) {
+                    binding.etEmail.apply {
+                        requestFocus()
+                        error = validation.email.message
+                    }
+                }
+
+                if (validation.password is RegisterValidation.Failed) {
+                    binding.etPassword.apply {
+                        requestFocus()
+                        error = validation.password.message
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeUserRegister() {
         lifecycleScope.launchWhenStarted {
             viewModel.register.collect {
                 when (it) {
@@ -51,49 +74,23 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
                         userRegisteredSuccess()
                     }
                     is Resource.Error -> {
-                        Log.e(TAG, it.message.toString())
+                        handleError(it.message ?: "Unknown Error")
                         binding.btnSignUp.revertAnimation()
                     }
                     else -> Unit
                 }
             }
         }
-
-        lifecycleScope.launchWhenStarted {
-            viewModel.registerValidation.collect { validation ->
-                if (validation.email is RegisterValidation.Failed) {
-                    withContext(Dispatchers.Main) {
-                        binding.etEmail.apply {
-                            requestFocus()
-                            error = validation.email.message
-                        }
-                    }
-                }
-
-                if (validation.password is RegisterValidation.Failed) {
-                    withContext(Dispatchers.Main) {
-                        binding.etPassword.apply {
-                            requestFocus()
-                            error = validation.password.message
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun setupActionBar() {
-
-        val appCompatActivity = requireActivity() as AppCompatActivity
-
-        appCompatActivity.setSupportActionBar(binding.toolbarSignUpFragment)
-
-        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
+        (activity as AppCompatActivity).apply {
+            setSupportActionBar(binding.toolbarSignUpFragment)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
+            }
         }
-
         binding.toolbarSignUpFragment.setNavigationOnClickListener { findNavController().popBackStack() }
     }
 
@@ -118,5 +115,9 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
             "You have successfully registered.",
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun handleError(message: String) {
+        Toast.makeText(requireActivity(), "Error: $message", Toast.LENGTH_LONG).show()
     }
 }

@@ -55,23 +55,24 @@ class HomeFragment: Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.add_habit -> {
                 findNavController().navigate(R.id.action_homeFragment_to_addHabitFragment)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+        // Function to retrieve the deleted habit (if any) when the fragment is resumed.
+        override fun onResume() {
+            super.onResume()
+
+            val deletedHabit = findNavController().currentBackStackEntry?.savedStateHandle?.remove<Habit>(HABIT_DELETED)
+            if (deletedHabit != null) {
+                showSnackbar("Habit deleted", deletedHabit)
             }
         }
-        return super.onOptionsItemSelected(item)
-    }
-
-    // Function to retrieve the deleted habit (if any) when the fragment is resumed.
-    override fun onResume() {
-        super.onResume()
-
-        val deletedHabit = findNavController().currentBackStackEntry?.savedStateHandle?.remove<Habit>(HABIT_DELETED)
-        if (deletedHabit != null) {
-            showSnackbar("Habit deleted", deletedHabit)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -81,42 +82,12 @@ class HomeFragment: Fragment() {
 
         viewModel.getHabits()
 
-        //
-        lifecycleScope.launchWhenStarted {
-            viewModel.habits.collect {
-                when (it) {
-                    is Resource.Loading -> {
-                    }
-                    is Resource.Success -> {
-                        habitList = it.data!!
-                        habitAdapter.updateData(habitList)
-                    }
-                    is Resource.Error -> {
-                        Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
-                    }
-                    else -> Unit
-                }
-            }
-        }
+        observeGetHabits()
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.addHabit.collect {
-                when (it) {
-                    is Resource.Loading -> {
-                    }
-                    is Resource.Success -> {
-                        viewModel.getHabits()
-                    }
-                    is Resource.Error -> {
-                        Toast.makeText(requireActivity(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
-                    }
-                    else -> Unit
-                }
-            }
-        }
+        observeAddHabits()
 
         habitAdapter.setOnDayClickListener { habit ->
-            viewModel.updateHabitDay(habit)
+            viewModel.updateHabit(habit)
         }
 
         habitAdapter.onHabitItemClick = { habit ->
@@ -125,6 +96,48 @@ class HomeFragment: Fragment() {
             }
 
             findNavController().navigate(R.id.action_homeFragment_to_editHabitFragment, bundle)
+        }
+    }
+
+    private fun observeGetHabits() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.habits.collect {
+                when (it) {
+                    is Resource.Loading -> {
+                    }
+                    is Resource.Success -> {
+                        habitList = it.data ?: ArrayList()
+                        habitAdapter.updateData(habitList)
+                    }
+                    is Resource.Error -> {
+                        handleError(it.message ?: "Unknown Error")
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    private fun observeAddHabits() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.addHabit.collect {
+                when (it) {
+                    is Resource.Loading -> {
+                    }
+                    is Resource.Success -> {
+                        val addedHabit = it.data
+                        addedHabit?.let {
+                            habitList.add(it)
+                            habitAdapter.updateData(habitList)
+                        }
+                        viewModel.getHabits()
+                    }
+                    is Resource.Error -> {
+                        handleError(it.message ?: "Unknown Error")
+                    }
+                    else -> Unit
+                }
+            }
         }
     }
 
@@ -150,5 +163,9 @@ class HomeFragment: Fragment() {
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             adapter = habitAdapter
         }
+    }
+
+    private fun handleError(message: String) {
+        Toast.makeText(requireActivity(), "Error: $message", Toast.LENGTH_LONG).show()
     }
 }

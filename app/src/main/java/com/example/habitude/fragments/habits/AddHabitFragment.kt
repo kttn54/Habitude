@@ -46,8 +46,12 @@ class AddHabitFragment : Fragment() {
 
         binding.btnAddHabit.setOnClickListener {
             val habitName = binding.etHabitName.text.toString().trim()
-            val habit = Habit(habitName)
-            viewModel.addHabit(habit)
+            if (habitName.isNotBlank()) {
+                val habit = Habit(habitName)
+                viewModel.addHabit(habit)
+            } else {
+                Toast.makeText(requireActivity(), "Habit name cannot be empty", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // The habit will be saved when the "enter" button is pressed

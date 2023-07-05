@@ -1,6 +1,5 @@
 package com.example.habitude.viewmodel
 
-import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,12 +8,9 @@ import com.example.habitude.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -32,8 +28,8 @@ class LoginViewModel @Inject constructor(
     private val _login = MutableSharedFlow<Resource<FirebaseUser>>()
     val login = _login.asSharedFlow()
 
-    private val _validation = Channel<RegisterFieldsState>()
-    val loginValidation = _validation.receiveAsFlow()
+    private val _validation = MutableSharedFlow<RegisterFieldsState>()
+    val loginValidation = _validation.asSharedFlow()
 
     private val _resetPassword = MutableSharedFlow<Resource<String>>()
     val resetPassword = _resetPassword.asSharedFlow()
@@ -42,11 +38,9 @@ class LoginViewModel @Inject constructor(
     private var _snackbarEvent = MutableLiveData<SnackbarEvent>()
     val snackbarEvent: LiveData<SnackbarEvent> = _snackbarEvent
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String) = viewModelScope.launch {
         if (checkValidation(email, password)) {
-            runBlocking {
-                _login.emit(Resource.Loading())
-            }
+            _login.emit(Resource.Loading())
 
             if (validateForm(email, password)) {
                 firebaseAuth.signInWithEmailAndPassword(
@@ -57,7 +51,6 @@ class LoginViewModel @Inject constructor(
                             _login.emit(Resource.Success(it))
                         }
                     }
-
                 }.addOnFailureListener {
                     viewModelScope.launch {
                         _login.emit(Resource.Error(it.message.toString()))
@@ -68,17 +61,15 @@ class LoginViewModel @Inject constructor(
             val registerFieldsState = RegisterFieldsState(
                 validateEmail(email), validatePassword(password)
             )
-            runBlocking {
-                _validation.send(registerFieldsState)
-            }
+            _validation.emit(registerFieldsState)
         }
     }
 
     private fun validateForm(email: String, password: String): Boolean {
-        return if (TextUtils.isEmpty(email)) {
+        return if (email.isNullOrEmpty()) {
             _snackbarEvent.value = SnackbarEvent("Please enter email.")
             false
-        } else if (TextUtils.isEmpty(password)) {
+        } else if (password.isNullOrEmpty()) {
             _snackbarEvent.value = SnackbarEvent("Please enter password.")
             false
         } else {
@@ -102,7 +93,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun getCurrentUserId(): String {
-        var currentUser = firebaseAuth.currentUser
+        val currentUser = firebaseAuth.currentUser
         var currentUserId = ""
 
         if (currentUser != null) {
