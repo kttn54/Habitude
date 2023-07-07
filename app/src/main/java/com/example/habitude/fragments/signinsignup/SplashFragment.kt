@@ -13,7 +13,6 @@ import com.example.habitude.R
 import com.example.habitude.activities.HabitActivity
 import com.example.habitude.activities.IntroductionActivity
 import com.example.habitude.databinding.FragmentSplashBinding
-import com.example.habitude.viewmodel.HabitViewModel
 import com.example.habitude.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

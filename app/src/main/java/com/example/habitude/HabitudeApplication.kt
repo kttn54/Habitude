@@ -2,18 +2,11 @@ package com.example.habitude
 
 import android.app.Application
 import android.util.Log
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.work.*
 import com.example.habitude.background.UpdateDataWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
-import com.example.habitude.viewmodel.HabitViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
-import javax.inject.Inject
 
 /**
  *  The recurring task of updating the habits every day is placed in the 'Application' class as it in the

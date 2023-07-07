@@ -10,7 +10,6 @@ import com.example.habitude.data.Habit
 import com.example.habitude.databinding.ItemHabitRowBinding
 import com.example.habitude.utils.HabitDiffCallback
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * This class is the adapter for the Habit RecyclerView.

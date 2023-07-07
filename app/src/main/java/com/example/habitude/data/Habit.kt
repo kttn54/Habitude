@@ -1,8 +1,6 @@
 package com.example.habitude.data
 
-import android.os.Parcel
 import android.os.Parcelable
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.parcel.Parcelize
 
 /**
