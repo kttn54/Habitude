@@ -1,6 +1,6 @@
 # Habitude - Habit Tracking App
 
-Habitude is a modern, simple, and efficient habit tracking app, developed with the latest Android development practices. This app enables users to track their habits, encouraging them to maintain productive routines and achieve their goals.
+Habitude is a modern, simple, and efficient habit tracking app, developed with the latest Android development practices. This app enables users to track their habits, encouraging them to maintain productive routines to achieve their goals.
 
 ## Screenshots
 
@@ -31,11 +31,9 @@ The following tech stack was used to develop Habitude:
 
 The project follows the MVVM design pattern. It has a solid separation of concerns, and it makes use of ViewModels and data source classes, providing a clean codebase and architecture.
 
-## Installation
+## How To Run
 
-To get the project up and running on your local machine, follow these steps:
-
-1. Clone the project to your machine.
+1. Clone this repository
 2. Update the `gradle.properties` with your Firebase configuration.
 3. Run the application using Android Studio and an emulator.
 
