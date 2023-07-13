@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -71,6 +72,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
                     is Resource.Success -> {
                         binding.btnSignUp.revertAnimation()
                         userRegisteredSuccess()
+                        findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
                     }
                     is Resource.Error -> {
                         handleError(it.message ?: "Unknown Error")
@@ -83,14 +85,17 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
     }
 
     private fun setupActionBar() {
-        (activity as AppCompatActivity).apply {
-            setSupportActionBar(binding.toolbarSignUpFragment)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
-            }
+        val toolbar = binding.toolbarSignUpFragment
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
+            title = "Sign Up"
+            toolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            setDisplayHomeAsUpEnabled(true)
         }
-        binding.toolbarSignUpFragment.setNavigationOnClickListener { findNavController().popBackStack() }
+
+        binding.toolbarSignUpFragment.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
     }
 
     private fun registerUser() {

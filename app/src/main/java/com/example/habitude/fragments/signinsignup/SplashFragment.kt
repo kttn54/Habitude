@@ -1,6 +1,5 @@
 package com.example.habitude.fragments.signinsignup
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -11,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.habitude.R
 import com.example.habitude.activities.HabitActivity
-import com.example.habitude.activities.IntroductionActivity
 import com.example.habitude.databinding.FragmentSplashBinding
 import com.example.habitude.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,19 +53,12 @@ class SplashFragment: Fragment(R.layout.fragment_splash) {
         */
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
-            var currentUserId = viewModel.getCurrentUserId()
+            val currentUserId = viewModel.getCurrentUserId()
             if (currentUserId.isNotEmpty()) {
                 startActivity(Intent(requireActivity(), HabitActivity::class.java))
             } else {
                 findNavController().navigate(R.id.action_splashFragment_to_introFragment2)
             }
         }, delayMillis)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is IntroductionActivity) {
-            context.makeSplashFullScreen()
-        }
     }
 }

@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Habitude"
         tools:targetApi="31">
+
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
@@ -23,23 +24,16 @@
 
         <activity
             android:name=".activities.IntroductionActivity"
-            android:exported="true"
-            android:theme="@style/Theme.HabitudeSplash" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.HabitActivity"
             android:exported="false" />
-<!--            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>-->
     </application>
 
 </manifest>

@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,7 +44,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.etEmailSignIn.requestFocus()
+        setupActionBar()
 
         // This will click the sign in button when the "enter" button is pressed
         binding.etPasswordSignIn.setOnEditorActionListener { _, actionId, event ->
@@ -72,6 +74,20 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         }
 
         observeResetPassword()
+    }
+
+    private fun setupActionBar() {
+        val toolbar = binding.toolbarSignInActivity
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
+            title = "Sign In"
+            toolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            setDisplayHomeAsUpEnabled(true)
+        }
+
+        binding.toolbarSignInActivity.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
     }
 
     // A Snackbar will show if there is a change in value in the snackbar variable in the LoginViewModel.
