@@ -1,6 +1,6 @@
 package com.example.habitude.data
 
-/**
+/**t
  * This class contains the model for the User object
  */
 
