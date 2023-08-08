@@ -4,8 +4,7 @@ Habitude is a modern, simple, and efficient habit tracking app, developed with t
 
 ## Screenshots
 
-![Habitude_home_screen](https://github.com/stporg/Habitude/assets/127300104/cb7cec71-3173-4490-be5b-2881e46d9284)
-![Habitude_user_profile](https://github.com/stporg/Habitude/assets/127300104/cb900854-b044-4a17-ae5e-8a713efed73b)
+![Habitude_gif](https://github.com/kttn54/Habitude/assets/127300104/6972a180-37b6-4bbe-8146-5afc3f165192)
 
 ## Features
 
