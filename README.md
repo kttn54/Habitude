@@ -2,7 +2,7 @@
 
 Habitude is a modern, simple, and efficient habit tracking app, developed with the latest Android development practices. This app enables users to track their habits, encouraging them to maintain productive routines to achieve their goals.
 
-## Screenshots
+## Demonstration
 
 ![Habitude_gif](https://github.com/kttn54/Habitude/assets/127300104/6972a180-37b6-4bbe-8146-5afc3f165192)
 
